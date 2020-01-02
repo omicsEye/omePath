@@ -174,10 +174,10 @@ OSEA <- function(stats_table,
                           label=sprintf("p-value: %.4f\nn: %s out of %s",enrichment_stats[i, 'pval'], enrichment_stats[i,'n'],
                                         enrichment_stats[i,'N']) ,
                           color="black", size= 2.25, fontface="italic")+
-        ggplot2::annotate(geom="text", x= median(Rank), y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
+        ggplot2::annotate(geom="text", x= median(stats$Rank), y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
                           label=sprintf("Hihger in %s", "case") ,
                           color="black", size= 2.25, fontface="italic")+
-        ggplot2::geom_vline( ggplot2::aes(xintercept = median(Rank)), color="black", size = 0.1)+
+        ggplot2::geom_vline( ggplot2::aes(xintercept = median(stats$Rank)), color="black", size = 0.1)+
 
         ggplot2::xlab(sprintf("Rank of %s", score_col))+
         ggplot2::ylab('Density')

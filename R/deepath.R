@@ -144,7 +144,7 @@ deepath <- function(stats_table,
   site_names <- set_names()
 
   logging::loginfo("Running selected analysis method: %s", method)
-  results <- MSEA(stats_table = stats_table, score_col = score_col,
+  results <- OSEA(stats_table = stats_table, score_col = score_col,
                                      pval_threshold = .05,
                                      Pathway.Subject = 'Metabolic',
                                      output = output,
