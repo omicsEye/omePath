@@ -175,7 +175,7 @@ OSEA <- function(stats_table,
                                         enrichment_stats[i,'N']) ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::annotate(geom="text", x= median(stats$Rank), y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
-                          label=sprintf("Hihger in %s", "case") ,
+                          label=sprintf("Hihger in %s", "control") ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::geom_vline( ggplot2::aes(xintercept = median(stats$Rank)), color="black", size = 0.1)+
 
@@ -199,9 +199,12 @@ OSEA <- function(stats_table,
         ggplot2::guides(fill = ggplot2::guide_legend(title = "", keywidth=0.25 ,keyheight=0.25, default.unit="cm"),
                         colour = ggplot2::guide_legend(title = "",keywidth=0.25 ,keyheight=0.25, default.unit="cm"))+
         ggplot2::theme(legend.justification=c(0,0), legend.position=c(.15,.7))+
-        ggplot2::annotate(geom="text", x= Inf, y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
+        ggplot2::annotate(geom="text", x= Inf, y = Inf, #hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
                           label=sprintf("p-value: %.4f\nn: %s out of %s",enrichment_stats[i, 'pval'], enrichment_stats[i,'n'],
                                         enrichment_stats[i,'N']) ,
+                          color="black", size= 2.25, fontface="italic")+
+        ggplot2::annotate(geom="text", x= 0, y = Inf, #hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
+                          label=sprintf("Higher in %s", "Control") ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::geom_vline( xintercept = 0, color="black", size = 0.1)+
         ggplot2::xlab(score_col)+

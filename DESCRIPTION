@@ -5,7 +5,8 @@ Authors@R:
     person(given = "Ali",
            family = "Rahnavard",
            role = c("aut", "cre"),
-           email = "gholamali.rahnavard@gmail.com")
+           email = "gholamali.rahnavard@gmail.com",
+           comment = c(ORCID = "0000-0002-9710-0248"))
 Description: Omics Pathway Enrichment Analysis
 License: MIT License
 Encoding: UTF-8
