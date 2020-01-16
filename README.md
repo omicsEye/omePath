@@ -10,7 +10,6 @@ deepath is a generic tool for omics pathway enrichment analysis
 * [Setp 1](https://github.com/omicsEye/deepath/wiki): install deepath and its depedencies 
 * [Setp 2](https://github.com/omicsEye/deepath/wiki): download refrence mapping databases
 
-What are the steups unique to your OS? What did you need to skip in your installation steps? Did you need any package that is not listed in the requirements? 
 
 ### Input files format ###
 
