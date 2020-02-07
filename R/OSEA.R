@@ -175,7 +175,7 @@ OSEA <- function(stats_table,
                                         enrichment_stats[i,'N']) ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::annotate(geom="text", x= median(stats$Rank), y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
-                          label=sprintf("Hihger in %s", "control") ,
+                          label=sprintf("Control") ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::geom_vline( ggplot2::aes(xintercept = median(stats$Rank)), color="black", size = 0.1)+
 
@@ -204,7 +204,7 @@ OSEA <- function(stats_table,
                                         enrichment_stats[i,'N']) ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::annotate(geom="text", x= 0, y = Inf, #hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
-                          label=sprintf("Higher in %s", "Control") ,
+                          label=sprintf("Control") ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::geom_vline( xintercept = 0, color="black", size = 0.1)+
         ggplot2::xlab(score_col)+
