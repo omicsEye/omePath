@@ -9,8 +9,8 @@ for (lib in c('dplyr', 'readr', 'downloader', 'logging')) {
 set_coloures <- function(){
   site_colours <- list()
   site_colours$Reference_genome <- "white"
-  site_colours$all_features <- "gray60"
-  site_colours$pathway <- "orange"
+  site_colours$all_features <- rgb(0, 38, 84, maxColorValue = 255) #"gray60"
+  site_colours$pathway <- rgb(226, 203, 146, maxColorValue = 255) "orange"
   return(site_colours)
 }
 #-------------------------------------------------------------------------------------------------
