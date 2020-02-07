@@ -79,8 +79,8 @@ OSEA <- function(stats_table,
   logging::loginfo("Loading files is done, now calculating enrichments p-value! This may take 10 or more minutes!!!")
   pathways <- unique(unlist(lapply(mapper_pathway2feature$Pathway, as.character)))
   #pathways <- intersect(mapper_pathway2feature$Pathway, mapper_pathway2feature$Pathway)
+  #i <- 1
   for (i in 1:length(pathways)) {
-    #i <- 1
     current_member <- pathways[i] # "Purine Metabolism" #
     pathway_members <- mapper_pathway2feature[as.character(mapper_pathway2feature[,pathway_col]) == current_member, feature_col]
     pathway_members_in_study <- intersect(pathway_members, rownames(stats))
@@ -116,6 +116,7 @@ OSEA <- function(stats_table,
   }
   # Add q value to the enrichment stats and write it to th eoutput
   enrichment_stats$fdr <- p.adjust(enrichment_stats$pval, method = 'BH')
+  if(dim(enrichment_stats)[1] == 0) stop("No pathwasy found with minumu number of features!!!\nPlease make sure your your mapping files includes your features!!!")
   enrichment_stats <- enrichment_stats[order(enrichment_stats["pval"]),]
   # write stats in the output
   write.table(enrichment_stats,  paste(output, '/enrichment_stats.txt', sep=''),
@@ -175,7 +176,7 @@ OSEA <- function(stats_table,
                                         enrichment_stats[i,'N']) ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::annotate(geom="text", x= median(stats$Rank), y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
-                          label=sprintf("Hihger in %s", "control") ,
+                          label=sprintf("Control") ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::geom_vline( ggplot2::aes(xintercept = median(stats$Rank)), color="black", size = 0.1)+
 
@@ -204,7 +205,7 @@ OSEA <- function(stats_table,
                                         enrichment_stats[i,'N']) ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::annotate(geom="text", x= 0, y = Inf, #hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
-                          label=sprintf("Higher in %s", "Control") ,
+                          label=sprintf("Control") ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::geom_vline( xintercept = 0, color="black", size = 0.1)+
         ggplot2::xlab(score_col)+
