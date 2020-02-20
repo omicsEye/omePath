@@ -1,0 +1,1 @@
+# this script inlcudes scoring functions supported by deepath
