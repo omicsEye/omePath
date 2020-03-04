@@ -11,7 +11,7 @@ OSEA <- function(stats_table,
                  score_col = 'logFC',
                  pval_threshold = 0.05,
                  fdr_threshold = NA,
-                 Pathway.Subject = 'Metabolic',
+                 Pathway.Subject = NA,
                  method = 'gset',
                  min_member=2,
                  mapper_file=NA,
@@ -21,17 +21,33 @@ OSEA <- function(stats_table,
   
   # load mapping files
   ## load all elements (HMDBID) in all sets (Ko's pathways)
-  if (is.na(mapper_file)) {
-    mapper_pathway2feature <- read.csv("data/smpdb_metabolites.csv")
-  }else if (endsWith(mapper_file,".csv")){
-    mapper_pathway2feature <- read.csv(mapper_file)
-  }else {
-    mapper_pathway2feature <- read.table(mapper_file, header = T, sep = '\t')# col.names = NA, row.names = T
+  
+  if (is.character(mapper_file)) {
+    
+    # if (is.na(mapper_file)) {
+    #   mapper_pathway2feature <- read.csv("data/smpdb_metabolites.csv")
+    # }else if (endsWith(mapper_file,".csv")){
+    #   mapper_pathway2feature <- read.csv(mapper_file)
+    # }else {
+    #   mapper_pathway2feature <- read.table(mapper_file, header = T, sep = '\t')# col.names = NA, row.names = T
+    # }
+    mapper_pathway2feature <-
+      data.frame(data.table::fread(
+        mapper_file, header = TRUE, sep = "\t"),
+        row.names = 1)
+    if (nrow(mapper_pathway2feature) == 1) {
+      # read again to get row name
+      mapper_pathway2feature <- read.table(mapper_file, header = TRUE, row.names = 1)
+    }
+  } else {
+    mapper_pathway2feature <- mapper_file
   }
   if (!is.na(Pathway.Subject)) {
     if ('Subject' %in% colnames(mapper_pathway2feature))
       mapper_pathway2feature <- mapper_pathway2feature[mapper_pathway2feature$Subject == Pathway.Subject,]
     else print(paste('Pathway.Subject is not mapping file!!!'))
+  }else{
+    Pathway.Subject <- ''
   }
   ## load mapping old<-->new HMDB IDs files
   #if (!is.na(mapper_oldhmdb_newhmdb_file)) {
@@ -77,7 +93,7 @@ OSEA <- function(stats_table,
   
   # calculate p value for all sets (pathway terms)
   logging::loginfo("Loading files is done, now calculating enrichments p-value! This may take 10 or more minutes!!!")
-  pathways <- unique(unlist(lapply(mapper_pathway2feature$Pathway, as.character)))
+  pathways <- unique(unlist(lapply(mapper_pathway2feature[pathway_col], as.character)))
   #pathways <- intersect(mapper_pathway2feature$Pathway, mapper_pathway2feature$Pathway)
   #i <- 1
   for (i in 1:length(pathways)) {
@@ -172,8 +188,8 @@ OSEA <- function(stats_table,
                         colour = ggplot2::guide_legend(title = "",keywidth=0.25 ,keyheight=0.25, default.unit="cm"))+
         ggplot2::theme(legend.justification=c(0,0), legend.position=c(.15,.7))+
         ggplot2::annotate(geom="text", x= Inf, y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
-                          label=sprintf("p-value: %.4f\nn: %s out of %s",enrichment_stats[i, 'pval'], enrichment_stats[i,'n'],
-                                        enrichment_stats[i,'N']) ,
+                          label=sprintf("p-value: %.4f\nn: %s out of %s\n%s",enrichment_stats[i, 'pval'], enrichment_stats[i,'n'],
+                                        enrichment_stats[i,'N'],Pathway.Subject) ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::annotate(geom="text", x= median(stats$Rank), y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
                           label=sprintf("Control") ,
@@ -201,8 +217,8 @@ OSEA <- function(stats_table,
                         colour = ggplot2::guide_legend(title = "",keywidth=0.25 ,keyheight=0.25, default.unit="cm"))+
         ggplot2::theme(legend.justification=c(0,0), legend.position=c(.15,.7))+
         ggplot2::annotate(geom="text", x= Inf, y = Inf, #hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
-                          label=sprintf("p-value: %.4f\nn: %s out of %s",enrichment_stats[i, 'pval'], enrichment_stats[i,'n'],
-                                        enrichment_stats[i,'N']) ,
+                          label=sprintf("p-value: %.4f\nn: %s out of %s\n%s",enrichment_stats[i, 'pval'], enrichment_stats[i,'n'],
+                                        enrichment_stats[i,'N'], Pathway.Subject) ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::annotate(geom="text", x= 0, y = Inf, #hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
                           label=sprintf("Control") ,

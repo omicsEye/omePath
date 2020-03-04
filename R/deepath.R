@@ -145,10 +145,10 @@ deepath <- function(stats_table,
 
   logging::loginfo("Running selected analysis method: %s", method)
   results <- OSEA(stats_table = stats_table, score_col = score_col,
-                                     pval_threshold = .05,
-                                     Pathway.Subject = 'Metabolic',
+                                     pval_threshold = pval_threshold,
+                                     Pathway.Subject = Pathway.Subject,
                                      output = output,
-                                     do_plot = TRUE,
+                                     do_plot = do_plot,
                                      mapper_file = mapper_file,
                                      method = method,
                                      min_member = min_member,

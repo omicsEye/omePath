@@ -11,5 +11,5 @@ Description: Omics Pathway Enrichment Analysis
 License: MIT License
 Encoding: UTF-8
 LazyData: true
-Collate: deepath.R OSEA.R utils.R theme_nature.r
+Collate: deepath.R OSEA.R utils.R theme_nature.r score.R
 RoxygenNote: 6.1.1
