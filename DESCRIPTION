@@ -1,15 +1,26 @@
 Package: deepath
-Title: deepath
-Version: 0.0.0.1
-Authors@R: 
-    person(given = "Ali",
+Title: Generic Omics Pathway Enrichment Analysis
+Version: 1.1.1
+Authors@R:c( 
+           person(given = "Ali",
            family = "Rahnavard",
            role = c("aut", "cre"),
            email = "gholamali.rahnavard@gmail.com",
            comment = c(ORCID = "0000-0002-9710-0248"))
+           )
+year: 2020
+date: 2020
+Depends: R (>= 3.6)
 Description: Omics Pathway Enrichment Analysis
-License: MIT License
-Encoding: UTF-8
-LazyData: true
-Collate: deepath.R OSEA.R utils.R theme_nature.r score.R
+License: MIT + file LICENSE
+LazyData: false
 RoxygenNote: 6.1.1
+Imports: ggplot2, pheatmap, stats, utils
+Suggests: 
+    knitr,
+    testthat (>= 2.1.0)
+VignetteBuilder: knitr
+Collate: deepath.R OSEA.R utils.R theme_nature.r score.R
+URL: https://www.rahnavard.org/deepath
+biocViews: Omics, Software, Enrichment, Analysis
+BugReports: https://github.com/omicsEye/deepath/issues

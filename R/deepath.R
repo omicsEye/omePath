@@ -65,59 +65,89 @@ method_choices <- c("gset","ks", 'wilcox')
 # Main maaslin2 function with defaults set to the same as those used on the command line #
 ##########################################################################################
 #' @export
-deepath <- function(stats_table,
-                   output,
-                   score_col = 'logFC',
-                   pval_threshold = 0.05,
-                   fdr_threshold = NA,
-                   Pathway.Subject = 'Metabolic',
-                   method = 'gset',
-                   min_member=2,
-                   mapper_file=NA,
-                   do_plot = TRUE,
-                   pathway_col = "Pathway",
-                   feature_col = "Feature")
+deepath <- function(
+                    input_data,
+                    input_metadata,
+                    output,
+                    score_col = 'logFC',
+                    pval_threshold = 0.05,
+                    fdr_threshold = NA,
+                    Pathway.Subject = 'Metabolic',
+                    method = 'gset',
+                    min_member=2,
+                    mapper_file=NA,
+                    do_plot = TRUE,
+                    pathway_col = "Pathway",
+                    feature_col = "Feature")
 {
+  
   #################################################################
-  # Read in the scor set data and create output folder, init log  #
+  # Read in the data and metadata, create output folder, init log #
   #################################################################
-  # if a character string then this is a file name, else it is a data frame
-  if (is.character(stats_table)) {
-    stats_table <- data.frame(data.table::fread(stats_table, header = TRUE, sep = "\t"), row.names = 1)
-    if (nrow(stats_table) == 1) {
+  # if a character string then this is a file name, else it 
+  # is a data frame
+  if (is.character(input_data)) {
+    data <-
+      data.frame(data.table::fread(
+        input_data, header = TRUE, sep = "\t"),
+        row.names = 1)
+    if (nrow(data) == 1) {
       # read again to get row name
-      stats_table <- read.table(stats_table, header = TRUE, row.names = 1)
+      data <- read.table(input_data, header = TRUE, row.names = 1)
     }
   } else {
-    stats_table <- stats_table
+    data <- input_data
   }
-
-  # create an output folder if it does not exist
+  if (is.character(input_metadata)) {
+    metadata <-
+      data.frame(data.table::fread(
+        input_metadata, header = TRUE, sep = "\t"),
+        row.names = 1)
+    if (nrow(metadata) == 1) {
+      metadata <- read.table(input_metadata,
+                             header = TRUE,
+                             row.names = 1)
+    }
+  } else {
+    metadata <- input_metadata
+  }
+  
+  # create an output folder and figures folder if it does not exist
   if (!file.exists(output)) {
     print("Creating output folder")
     dir.create(output)
   }
-
+  
+  figures_folder <- file.path(output,"figures")
+  if (!file.exists(figures_folder)) {
+    print("Creating output figures folder")
+    dir.create(figures_folder)
+  }
+  
   # create log file (write info to stdout and debug level to log file)
   # set level to finest so all log levels are reviewed
-  log_file <- file.path(output,"deepath.log")
+  log_file <- file.path(output, "maaslin2.log")
   # remove log file if already exists (to avoid append)
   if (file.exists(log_file)) {
     print(paste("Warning: Deleting existing log file:", log_file))
     unlink(log_file)
   }
   logging::basicConfig(level = 'FINEST')
-  logging::addHandler(logging::writeToFile,file = log_file,level = "DEBUG")
+  logging::addHandler(logging::writeToFile, 
+                      file = log_file, level = "DEBUG")
   logging::setLevel(20, logging::getHandler('basic.stdout'))
-
+  
   #####################
   # Log the arguments #
   #####################
-
+  
   logging::loginfo("Writing function arguments to log file")
   logging::logdebug("Function arguments")
-  if (is.character(score_col)) {
-    logging::logdebug("Input data file: %s", score_col)
+  if (is.character(input_data)) {
+    logging::logdebug("Input data file: %s", input_data)
+  }
+  if (is.character(input_metadata)) {
+    logging::logdebug("Input metadata file: %s", input_metadata)
   }
   logging::logdebug("Output folder: %s", output)
   logging::logdebug("Score type: %s", score_col)
@@ -142,7 +172,8 @@ deepath <- function(stats_table,
 
   site_colours <- set_coloures()
   site_names <- set_names()
-
+  stats_table <- test2groups(data , metadata, meta, case_label, control_label,
+                               test_type = 'wilcox.test', paired = F)
   logging::loginfo("Running selected analysis method: %s", method)
   results <- OSEA(stats_table = stats_table, score_col = score_col,
                                      pval_threshold = pval_threshold,
