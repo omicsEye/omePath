@@ -68,12 +68,15 @@ method_choices <- c("gset","ks", 'wilcox')
 deepath <- function(
                     input_data,
                     input_metadata,
+                    meta, 
+                    case_label, 
+                    control_label,
                     output,
                     score_col = 'logFC',
                     pval_threshold = 0.05,
                     fdr_threshold = NA,
-                    Pathway.Subject = 'Metabolic',
-                    method = 'gset',
+                    Pathway.Subject = NA,
+                    method = 'ks',
                     min_member=2,
                     mapper_file=NA,
                     do_plot = TRUE,
@@ -84,33 +87,161 @@ deepath <- function(
   #################################################################
   # Read in the data and metadata, create output folder, init log #
   #################################################################
-  # if a character string then this is a file name, else it 
-  # is a data frame
-  if (is.character(input_data)) {
-    data <-
-      data.frame(data.table::fread(
-        input_data, header = TRUE, sep = "\t"),
-        row.names = 1)
-    if (nrow(data) == 1) {
-      # read again to get row name
-      data <- read.table(input_data, header = TRUE, row.names = 1)
+  # is the metadata not provides then input data should be a score file
+  if (is.na(input_metadata)){
+    if (is.character(input_data)) {
+      data <-
+        data.frame(data.table::fread(
+          input_data, header = TRUE, check.names = FALSE, sep = "\t"),
+          row.names = 1)
+      
+      if (nrow(data) == 1) {
+        # read again to get row name
+        data <- read.table(input_data, header = TRUE, check.names = FALSE, row.names = 1)
+      }
+    } else {
+      data <- input_data
     }
-  } else {
-    data <- input_data
+    
   }
-  if (is.character(input_metadata)) {
-    metadata <-
-      data.frame(data.table::fread(
-        input_metadata, header = TRUE, sep = "\t"),
-        row.names = 1)
-    if (nrow(metadata) == 1) {
-      metadata <- read.table(input_metadata,
-                             header = TRUE,
-                             row.names = 1)
+  else{
+    # if a character string then this is a file name, else it 
+    # is a data frame
+    if (is.character(input_data)) {
+      data <-
+        data.frame(data.table::fread(
+          input_data, header = TRUE, check.names = FALSE, sep = "\t"),
+          row.names = 1)
+  
+      if (nrow(data) == 1) {
+        # read again to get row name
+        data <- read.table(input_data, header = TRUE, check.names = FALSE, row.names = 1)
+      }
+    } else {
+      data <- input_data
     }
-  } else {
-    metadata <- input_metadata
+    if (is.character(input_metadata)) {
+      metadata <-
+        data.frame(data.table::fread(
+          input_metadata, header = TRUE, check.names = FALSE, sep = "\t"),
+          row.names = 1)
+      if (nrow(metadata) == 1) {
+        metadata <- read.table(input_metadata,
+                               header = TRUE,
+                               check.names = FALSE,
+                               row.names = 1)
+      }
+    } else {
+      metadata <- input_metadata
+    }
+    ###############################################################
+    # Determine orientation of data in input and reorder to match #
+    ###############################################################
+    
+    logging::loginfo("Determining format of input files")
+    samples_row_row <- intersect(rownames(data), rownames(metadata))
+    if (length(samples_row_row) > 0) {
+      # this is the expected formatting so do not modify data frames
+      logging::loginfo(
+        paste(
+          "Input format is data samples",
+          "as rows and metadata samples as rows"))
+    } else {
+      samples_column_row <- intersect(colnames(data), rownames(metadata))
+      if (length(samples_column_row) > 0) {
+        logging::loginfo(
+          paste(
+            "Input format is data samples",
+            "as columns and metadata samples as rows"))
+        # transpose data frame so samples are rows
+        data <- as.data.frame(t(data))
+        logging::logdebug(
+          "Transformed data so samples are rows")
+      } else {
+        samples_column_column <- 
+          intersect(colnames(data), colnames(metadata))
+        if (length(samples_column_column) > 0) {
+          logging::loginfo(
+            paste(
+              "Input format is data samples",
+              "as columns and metadata samples as columns"))
+          data <- as.data.frame(t(data))
+          metadata <- as.data.frame(t(metadata))
+          logging::logdebug(
+            "Transformed data and metadata so samples are rows")
+        } else {
+          samples_row_column <- 
+            intersect(rownames(data), colnames(metadata))
+          if (length(samples_row_column) > 0) {
+            logging::loginfo(
+              paste(
+                "Input format is data samples",
+                "as rows and metadata samples as columns"))
+            metadata <- as.data.frame(t(metadata))
+            logging::logdebug(
+              "Transformed metadata so samples are rows")
+          } else {
+            logging::logerror(
+              paste("Unable to find samples in data and",
+                    "metadata files.",
+                    "Rows/columns do not match."))
+            logging::logdebug(
+              "Data rows: %s", 
+              paste(rownames(data), collapse = ","))
+            logging::logdebug(
+              "Data columns: %s", 
+              paste(colnames(data), collapse = ","))
+            logging::logdebug(
+              "Metadata rows: %s", 
+              paste(rownames(metadata), collapse = ","))
+            logging::logdebug(
+              "Metadata columns: %s",
+              paste(colnames(data), collapse = ","))
+            stop()
+          }
+        }
+      }
+    }
+    
+    # replace unexpected characters in feature names
+    #colnames(data) <- make.names(colnames(data))
+    
+    # check for samples without metadata
+    extra_feature_samples <-
+      setdiff(rownames(data), rownames(metadata))
+    if (length(extra_feature_samples) > 0)
+      logging::logdebug(
+        paste("The following samples were found",
+              "to have features but no metadata.",
+              "They will be removed. %s"),
+        paste(extra_feature_samples, collapse = ",")
+      )
+    
+    # check for metadata samples without features
+    extra_metadata_samples <-
+      setdiff(rownames(metadata), rownames(data))
+    if (length(extra_metadata_samples) > 0)
+      logging::logdebug(
+        paste("The following samples were found",
+              "to have metadata but no features.",
+              "They will be removed. %s"),
+        paste(extra_metadata_samples, collapse = ",")
+      )
+    
+    # get a set of the samples with both metadata and features
+    intersect_samples <- intersect(rownames(data), rownames(metadata))
+    logging::logdebug(
+      "A total of %s samples were found in both the data and metadata",
+      length(intersect_samples)
+    )
+    
+    # now order both data and metadata with the same sample ordering
+    logging::logdebug(
+      "Reordering data/metadata to use same sample ordering")
+    data <- data[intersect_samples, , drop = FALSE]
+    metadata <- metadata[intersect_samples, , drop = FALSE]
   }
+  
   
   # create an output folder and figures folder if it does not exist
   if (!file.exists(output)) {
@@ -126,7 +257,7 @@ deepath <- function(
   
   # create log file (write info to stdout and debug level to log file)
   # set level to finest so all log levels are reviewed
-  log_file <- file.path(output, "maaslin2.log")
+  log_file <- file.path(output, "deepath.log")
   # remove log file if already exists (to avoid append)
   if (file.exists(log_file)) {
     print(paste("Warning: Deleting existing log file:", log_file))
@@ -162,18 +293,23 @@ deepath <- function(
   logging::loginfo("Verifying options selected are valid")
 
   # check valid pvalue calculation method selected
-  if (!method %in% method_choices) {
-    option_not_valid_error("Please select a pvalue method from the list of available options", toString(method_choices))
-  }
+  #if (!method %in% method_choices) {
+  #  option_not_valid_error("Please select a pvalue method from the list of available options", toString(method_choices))
+  #}
+
 
   ####################################
   # apply the method to the data with the correction
   ####################################
 
-  site_colours <- set_coloures()
-  site_names <- set_names()
-  stats_table <- test2groups(data , metadata, meta, case_label, control_label,
+  #site_colours <- set_coloures()
+  #site_names <- set_names()
+  if (is.na(input_metadata)){
+    stats_table <- test2groups(data , metadata, meta, case_label, control_label,
                                test_type = 'wilcox.test', paired = F)
+  }else{
+    stats_table <- data
+  }
   logging::loginfo("Running selected analysis method: %s", method)
   results <- OSEA(stats_table = stats_table, score_col = score_col,
                                      pval_threshold = pval_threshold,

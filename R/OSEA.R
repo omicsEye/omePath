@@ -20,8 +20,6 @@ OSEA <- function(stats_table,
                  feature_col = "Feature"){
   
   # load mapping files
-  ## load all elements (HMDBID) in all sets (Ko's pathways)
-  
   if (is.character(mapper_file)) {
     
     # if (is.na(mapper_file)) {
@@ -33,11 +31,11 @@ OSEA <- function(stats_table,
     # }
     mapper_pathway2feature <-
       data.frame(data.table::fread(
-        mapper_file, header = TRUE, sep = "\t"),
+        mapper_file, header = TRUE, check.names = FALSE, sep = "\t"),
         row.names = 1)
     if (nrow(mapper_pathway2feature) == 1) {
       # read again to get row name
-      mapper_pathway2feature <- read.table(mapper_file, header = TRUE, row.names = 1)
+      mapper_pathway2feature <- read.table(mapper_file, header = TRUE, check.names = FALSE, row.names = 1)
     }
   } else {
     mapper_pathway2feature <- mapper_file

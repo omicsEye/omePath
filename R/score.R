@@ -3,18 +3,21 @@
 test2groups <- function(data,
          metadata,
          meta = 'Group',
-         case_lable = 'case',
+         case_label = 'case',
          control_label = 'control',
          test_type = 'wilcox.test',
          paired = F) {
-  case <- rownames(metadata[metadata$Group == case_lable, ])
-  control <- rownames(metadata[metadata$Group == control_label, ])
-  Case <- data[case,]
-  Control <- data[control,]
+  case_samples <- rownames(metadata[metadata[meta] == case_label, ])
+  control_samples <- rownames(metadata[metadata[meta] == control_label, ])
+  #data <- as.data.frame(t(data))
+  case <- data[case_samples,]
+  control <- data[control_samples,]
+  #tranpose data to row as samples and columns as features
+  
   stats_table <-
     setNames(
       data.frame(matrix(
-        ncol = 5, nrow = dim(Case)[2]
+        ncol = 5, nrow = dim(case)[2]
       )),
       c(
         "logFC",
@@ -26,23 +29,22 @@ test2groups <- function(data,
     )
   rownames(stats_table) <- colnames(case)
   for (i in 1:dim(stats_table)[1]) {
-    if (all(is.na(case[, i])) || all(is.na(control[, i]))) {
+    if (all(is.na(case[,i])) || all(is.na(control[,i]))) {
       #print(i)
       next
     }
+    #i <- 1
     stats_table[i, 'logFC'] <-
-      log2(mean(case[, i], na.rm = TRUE)) - log2(mean(control[, i], na.rm = TRUE))
+      log2(mean(case[,i], na.rm = TRUE)) - log2(mean(control[,i], na.rm = TRUE))
     tryCatch({
       if (test_type == 't.test') {
-        stats_table[i, 'P.Value'] <-
-          t.test(case[, i], control[, i], paired = paired)$p.value
-        stats_table[i, 'statistic'] <-
-          t.test(case[, i], control[, i], paired = paired)$statistic
+        temp_result <- t.test(case[,i], control[,i], paired = F)
+        stats_table[i, 'P.Value'] <- temp_result$p.value
+        stats_table[i, 'statistic'] <- temp_result$statistic
       } else{
-        stats_table[i, 'P.Value'] <-
-          wilcox.test(case[, i], control[, i], paired = paired)$p.value
-        stats_table[i, 'statistic'] <-
-          wilcox.test(case[, i], control[, i], paired = paired)$statistic
+        temp_result <- wilcox.test(case[,i], control[,i], paired = F)
+        stats_table[i, 'P.Value'] <- temp_result$p.value
+        stats_table[i, 'statistic'] <- temp_result$statistic
       }
     }, error = function(e) {
       stats_table[i, 'P.Value'] <- NA
@@ -56,6 +58,8 @@ test2groups <- function(data,
       method = 'BH',
       n = length(stats_table$P.Value)
     )
+  
   stats_table$feature <- rownames(stats_table)
-  return (stats_table)
+  return
+  (stats_table)
 }
