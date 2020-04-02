@@ -67,11 +67,11 @@ method_choices <- c("gset","ks", 'wilcox')
 #' @export
 deepath <- function(
                     input_data,
-                    input_metadata,
-                    meta, 
-                    case_label, 
-                    control_label,
+                    input_metadata = NA,
                     output,
+                    meta = NA, 
+                    case_label = NA, 
+                    control_label = NA,
                     score_col = 'logFC',
                     pval_threshold = 0.05,
                     fdr_threshold = NA,

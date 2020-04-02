@@ -56,22 +56,23 @@ library(deepath)
 
 
 # call the function
-deepath::deepath(input_data,
-                input_metadata,
-                meta, 
-                case_label, 
-                control_label,
-                output,
-                score_col = 'logFC',
-                pval_threshold = 0.05,
-                fdr_threshold = NA,
-                Pathway.Subject = NA,
-                method = 'ks',
-                min_member=2,
-                mapper_file=NA,
-                do_plot = TRUE,
-                pathway_col = "Pathway",
-                feature_col = "Feature")
+deepath <- function(
+                    input_data,
+                    input_metadata = NA,
+                    output,
+                    meta = NA, 
+                    case_label = NA, 
+                    control_label = NA,
+                    score_col = 'logFC',
+                    pval_threshold = 0.05,
+                    fdr_threshold = NA,
+                    Pathway.Subject = NA,
+                    method = 'ks',
+                    min_member=2,
+                    mapper_file=NA,
+                    do_plot = TRUE,
+                    pathway_col = "Pathway",
+                    feature_col = "Feature")
 
 ```
 
