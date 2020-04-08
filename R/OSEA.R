@@ -31,8 +31,8 @@ OSEA <- function(stats_table,
     # }
     mapper_pathway2feature <-
       data.frame(data.table::fread(
-        mapper_file, header = TRUE, check.names = FALSE, sep = "\t"),
-        row.names = 1)
+        mapper_file, header = TRUE, check.names = FALSE, sep = "\t")
+        )
     if (nrow(mapper_pathway2feature) == 1) {
       # read again to get row name
       mapper_pathway2feature <- read.table(mapper_file, header = TRUE, check.names = FALSE, row.names = 1)

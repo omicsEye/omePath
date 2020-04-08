@@ -34,102 +34,133 @@
 ###############################################################
 
 # this evaluates to true if script is being called directly as an executable
-if(identical(environment(), globalenv()) &&
-   !length( grep( "^source\\(", sys.calls()))) {
-
+if (identical(environment(), globalenv()) &&
+    !length(grep("^source\\(", sys.calls()))) {
   # source all R in deepath package, relative to this folder
-  script_options <-commandArgs(trailingOnly = FALSE)
-  script_path <- sub("--file=","",script_options[grep("--file=", script_options)])
+  script_options <- commandArgs(trailingOnly = FALSE)
+  script_path <-
+    sub("--file=", "", script_options[grep("--file=", script_options)])
   script_dir <- dirname(script_path)
   script_name <- basename(script_path)
-
-  for(R_file in dir(script_dir, pattern = "*.R"))
+  
+  for (R_file in dir(script_dir, pattern = "*.R"))
   {
-    if(! ( R_file == script_name )) source( file.path(script_dir, R_file) )
+    if (!(R_file == script_name))
+      source(file.path(script_dir, R_file))
   }
 }
 
 
 option_not_valid_error <- function(message, valid_options) {
-  logging::logerror(paste(message,": %s"), toString(valid_options))
-  stop("Option not valid", call.=FALSE)
+  logging::logerror(paste(message, ": %s"), toString(valid_options))
+  stop("Option not valid", call. = FALSE)
 }
 
 ###########################
 # Set the default options #
 ###########################
 
-method_choices <- c("gset","ks", 'wilcox')
+method_choices <- c("gset", "ks", 'wilcox')
 
 ##########################################################################################
 # Main maaslin2 function with defaults set to the same as those used on the command line #
 ##########################################################################################
 #' @export
-deepath <- function(
-                    input_data,
-                    input_metadata = NA,
+deepath <- function(input_data,
                     output,
-                    meta = NA, 
-                    case_label = NA, 
+                    input_metadata = NA,
+                    meta = NA,
+                    case_label = NA,
                     control_label = NA,
                     score_col = 'logFC',
                     pval_threshold = 0.05,
                     fdr_threshold = NA,
                     Pathway.Subject = NA,
                     method = 'ks',
-                    min_member=2,
-                    mapper_file=NA,
+                    min_member = 2,
+                    mapper_file = NA,
                     do_plot = TRUE,
                     pathway_col = "Pathway",
                     feature_col = "Feature")
 {
-  
   #################################################################
   # Read in the data and metadata, create output folder, init log #
   #################################################################
   # is the metadata not provides then input data should be a score file
-  if (is.na(input_metadata)){
+  if (is.na(input_metadata)) {
+    print("Yes")
     if (is.character(input_data)) {
       data <-
-        data.frame(data.table::fread(
-          input_data, header = TRUE, check.names = FALSE, sep = "\t"),
-          row.names = 1)
+        data.frame(
+          data.table::fread(
+            input_data,
+            header = TRUE,
+            check.names = FALSE,
+            sep = "\t"
+          ),
+          row.names = 1
+        )
       
       if (nrow(data) == 1) {
         # read again to get row name
-        data <- read.table(input_data, header = TRUE, check.names = FALSE, row.names = 1)
+        data <-
+          read.table(
+            input_data,
+            header = TRUE,
+            check.names = FALSE,
+            row.names = 1
+          )
       }
     } else {
       data <- input_data
     }
-    
   }
   else{
-    # if a character string then this is a file name, else it 
+    # if a character string then this is a file name, else it
     # is a data frame
     if (is.character(input_data)) {
       data <-
-        data.frame(data.table::fread(
-          input_data, header = TRUE, check.names = FALSE, sep = "\t"),
-          row.names = 1)
-  
+        data.frame(
+          data.table::fread(
+            input_data,
+            header = TRUE,
+            check.names = FALSE,
+            sep = "\t"
+          ),
+          row.names = 1
+        )
+      
       if (nrow(data) == 1) {
         # read again to get row name
-        data <- read.table(input_data, header = TRUE, check.names = FALSE, row.names = 1)
+        data <-
+          read.table(
+            input_data,
+            header = TRUE,
+            check.names = FALSE,
+            row.names = 1
+          )
       }
     } else {
       data <- input_data
     }
     if (is.character(input_metadata)) {
       metadata <-
-        data.frame(data.table::fread(
-          input_metadata, header = TRUE, check.names = FALSE, sep = "\t"),
-          row.names = 1)
+        data.frame(
+          data.table::fread(
+            input_metadata,
+            header = TRUE,
+            check.names = FALSE,
+            sep = "\t"
+          ),
+          row.names = 1
+        )
       if (nrow(metadata) == 1) {
-        metadata <- read.table(input_metadata,
-                               header = TRUE,
-                               check.names = FALSE,
-                               row.names = 1)
+        metadata <- read.table(
+          input_metadata,
+          header = TRUE,
+          check.names = FALSE,
+          row.names = 1
+        )
       }
     } else {
       metadata <- input_metadata
@@ -142,61 +173,61 @@ deepath <- function(
     samples_row_row <- intersect(rownames(data), rownames(metadata))
     if (length(samples_row_row) > 0) {
       # this is the expected formatting so do not modify data frames
-      logging::loginfo(
-        paste(
-          "Input format is data samples",
-          "as rows and metadata samples as rows"))
+      logging::loginfo(paste(
+        "Input format is data samples",
+        "as rows and metadata samples as rows"
+      ))
     } else {
       samples_column_row <- intersect(colnames(data), rownames(metadata))
       if (length(samples_column_row) > 0) {
-        logging::loginfo(
-          paste(
-            "Input format is data samples",
-            "as columns and metadata samples as rows"))
+        logging::loginfo(paste(
+          "Input format is data samples",
+          "as columns and metadata samples as rows"
+        ))
         # transpose data frame so samples are rows
         data <- as.data.frame(t(data))
-        logging::logdebug(
-          "Transformed data so samples are rows")
+        logging::logdebug("Transformed data so samples are rows")
       } else {
-        samples_column_column <- 
+        samples_column_column <-
           intersect(colnames(data), colnames(metadata))
         if (length(samples_column_column) > 0) {
           logging::loginfo(
             paste(
               "Input format is data samples",
-              "as columns and metadata samples as columns"))
+              "as columns and metadata samples as columns"
+            )
+          )
           data <- as.data.frame(t(data))
           metadata <- as.data.frame(t(metadata))
-          logging::logdebug(
-            "Transformed data and metadata so samples are rows")
+          logging::logdebug("Transformed data and metadata so samples are rows")
         } else {
-          samples_row_column <- 
+          samples_row_column <-
             intersect(rownames(data), colnames(metadata))
           if (length(samples_row_column) > 0) {
             logging::loginfo(
               paste(
                 "Input format is data samples",
-                "as rows and metadata samples as columns"))
+                "as rows and metadata samples as columns"
+              )
+            )
             metadata <- as.data.frame(t(metadata))
-            logging::logdebug(
-              "Transformed metadata so samples are rows")
+            logging::logdebug("Transformed metadata so samples are rows")
           } else {
             logging::logerror(
-              paste("Unable to find samples in data and",
-                    "metadata files.",
-                    "Rows/columns do not match."))
-            logging::logdebug(
-              "Data rows: %s", 
-              paste(rownames(data), collapse = ","))
-            logging::logdebug(
-              "Data columns: %s", 
-              paste(colnames(data), collapse = ","))
-            logging::logdebug(
-              "Metadata rows: %s", 
-              paste(rownames(metadata), collapse = ","))
-            logging::logdebug(
-              "Metadata columns: %s",
-              paste(colnames(data), collapse = ","))
+              paste(
+                "Unable to find samples in data and",
+                "metadata files.",
+                "Rows/columns do not match."
+              )
+            )
+            logging::logdebug("Data rows: %s",
+                              paste(rownames(data), collapse = ","))
+            logging::logdebug("Data columns: %s",
+                              paste(colnames(data), collapse = ","))
+            logging::logdebug("Metadata rows: %s",
+                              paste(rownames(metadata), collapse = ","))
+            logging::logdebug("Metadata columns: %s",
+                              paste(colnames(data), collapse = ","))
             stop()
           }
         }
@@ -211,9 +242,11 @@ deepath <- function(
       setdiff(rownames(data), rownames(metadata))
     if (length(extra_feature_samples) > 0)
       logging::logdebug(
-        paste("The following samples were found",
-              "to have features but no metadata.",
-              "They will be removed. %s"),
+        paste(
+          "The following samples were found",
+          "to have features but no metadata.",
+          "They will be removed. %s"
+        ),
         paste(extra_feature_samples, collapse = ",")
       )
     
@@ -222,22 +255,24 @@ deepath <- function(
       setdiff(rownames(metadata), rownames(data))
     if (length(extra_metadata_samples) > 0)
       logging::logdebug(
-        paste("The following samples were found",
-              "to have metadata but no features.",
-              "They will be removed. %s"),
+        paste(
+          "The following samples were found",
+          "to have metadata but no features.",
+          "They will be removed. %s"
+        ),
         paste(extra_metadata_samples, collapse = ",")
       )
     
     # get a set of the samples with both metadata and features
-    intersect_samples <- intersect(rownames(data), rownames(metadata))
+    intersect_samples <-
+      intersect(rownames(data), rownames(metadata))
     logging::logdebug(
       "A total of %s samples were found in both the data and metadata",
       length(intersect_samples)
     )
     
     # now order both data and metadata with the same sample ordering
-    logging::logdebug(
-      "Reordering data/metadata to use same sample ordering")
+    logging::logdebug("Reordering data/metadata to use same sample ordering")
     data <- data[intersect_samples, , drop = FALSE]
     metadata <- metadata[intersect_samples, , drop = FALSE]
   }
@@ -249,7 +284,7 @@ deepath <- function(
     dir.create(output)
   }
   
-  figures_folder <- file.path(output,"figures")
+  figures_folder <- file.path(output, "figures")
   if (!file.exists(figures_folder)) {
     print("Creating output figures folder")
     dir.create(figures_folder)
@@ -264,7 +299,7 @@ deepath <- function(
     unlink(log_file)
   }
   logging::basicConfig(level = 'FINEST')
-  logging::addHandler(logging::writeToFile, 
+  logging::addHandler(logging::writeToFile,
                       file = log_file, level = "DEBUG")
   logging::setLevel(20, logging::getHandler('basic.stdout'))
   
@@ -284,66 +319,87 @@ deepath <- function(
   logging::logdebug("Score type: %s", score_col)
   logging::logdebug("p-value threshold: %s", pval_threshold)
   logging::logdebug("Pathway subject: %s", Pathway.Subject)
-
+  
   ####################################
   # Check valid options are selected #
   ####################################
-
+  
   # Check valid normalization option selected
   logging::loginfo("Verifying options selected are valid")
-
+  
   # check valid pvalue calculation method selected
   #if (!method %in% method_choices) {
   #  option_not_valid_error("Please select a pvalue method from the list of available options", toString(method_choices))
   #}
-
-
+  
+  
   ####################################
   # apply the method to the data with the correction
   ####################################
-
+  
   #site_colours <- set_coloures()
   #site_names <- set_names()
-  if (is.na(input_metadata)){
-    stats_table <- test2groups(data , metadata, meta, case_label, control_label,
-                               test_type = 'wilcox.test', paired = F)
-  }else{
+  if (!is.na(input_metadata)) {
+    stats_table <-
+      test2groups(
+        data ,
+        metadata,
+        meta,
+        case_label,
+        control_label,
+        test_type = 'wilcox.test',
+        paired = F
+      )
+  } else{
     stats_table <- data
   }
   logging::loginfo("Running selected analysis method: %s", method)
-  results <- OSEA(stats_table = stats_table, score_col = score_col,
-                                     pval_threshold = pval_threshold,
-                                     Pathway.Subject = Pathway.Subject,
-                                     output = output,
-                                     do_plot = do_plot,
-                                     mapper_file = mapper_file,
-                                     method = method,
-                                     min_member = min_member,
-                                     pathway_col = pathway_col,
-                                     feature_col = feature_col)
-
+  results <- OSEA(
+    stats_table = stats_table,
+    score_col = score_col,
+    pval_threshold = pval_threshold,
+    Pathway.Subject = Pathway.Subject,
+    output = output,
+    do_plot = do_plot,
+    mapper_file = mapper_file,
+    method = method,
+    min_member = min_member,
+    pathway_col = pathway_col,
+    feature_col = feature_col
+  )
+  
   #########################
   # Write out the results #
   #########################
-
+  
   # write stats table result to file
   enrichment_stats_file = file.path(output, "enrichment_stats.tsv")
   # remove stats table file if already exists (since stats table append)
   if (file.exists(enrichment_stats_file)) {
-    logging::logwarn("Deleting existing stats table file: %s", enrichment_stats_file)
+    logging::logwarn("Deleting existing stats table file: %s",
+                     enrichment_stats_file)
     unlink(enrichment_stats_file)
   }
   logging::loginfo("Writing stats table to file %s", enrichment_stats_file)
-  write.table(results$enrichment_stats, file = enrichment_stats_file, sep = "\t", quote = FALSE, row.names =
-                FALSE)
-
+  write.table(
+    results$enrichment_stats,
+    file = enrichment_stats_file,
+    sep = "\t",
+    quote = FALSE,
+    row.names =
+      FALSE
+  )
+  
   #######################################################
   # Create visualizations for results passing threshold #
   #######################################################
-
+  
   if (do_plot) {
-    logging::loginfo("Writing enrichment plots (one for each significant association) to output folder: %s", output)
+    logging::loginfo(
+      "Writing enrichment plots (one for each significant association) to output folder: %s",
+      output
+    )
   }
-
+  
   return(results)
 }
