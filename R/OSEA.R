@@ -43,7 +43,7 @@ OSEA <- function(stats_table,
   if (!is.na(Pathway.Subject)) {
     if ('Subject' %in% colnames(mapper_pathway2feature))
       mapper_pathway2feature <- mapper_pathway2feature[mapper_pathway2feature$Subject == Pathway.Subject,]
-    else print(paste('Pathway.Subject is not mapping file!!!'))
+    else print(paste('Pathway.Subject is not in mapping file!!!'))
   }else{
     Pathway.Subject <- ''
   }
@@ -174,9 +174,9 @@ OSEA <- function(stats_table,
       stats$Set[indx] <- 'pathway'
       
       ### plot the enrichment based on rank ####################
-      density_plot <- ggplot2::ggplot(stats)
+      density_plot <- ggplot2::ggplot(stats, ggplot2::aes(x=Rank, fill = Set, color = Set))
       density_plot <- density_plot +
-        ggplot2::geom_density(ggplot2::aes(x=Rank, fill = Set), alpha = 0.4) +
+        ggplot2::geom_density(alpha = 0.4, size = .15) +
         ggplot2::geom_rug(ggplot2::aes(x = Rank, color = Set, y = 0),  alpha = 0.4, size =.1 )+
         ggplot2::scale_color_manual(values = unlist(site_colours), labels = unlist(site_names), name="Set")+
         ggplot2::scale_fill_manual(values = unlist(site_colours), labels = unlist(site_names), name="Set") + #theme(legend.position="none") +
@@ -203,10 +203,10 @@ OSEA <- function(stats_table,
       #logging::logdebug(stdout)
       
       ### plot the enrichment based on score ####################
-      density_plot <- ggplot2::ggplot(stats)
+      density_plot <- ggplot2::ggplot(stats, ggplot2::aes(x=get(score_col), fill = Set, color = Set))
       density_plot <- density_plot +
-        ggplot2::geom_density(ggplot2::aes(x=get(score_col), fill = Set), alpha = 0.4) +
-        ggplot2::geom_rug(ggplot2::aes(x = get(score_col), color = Set, y = 0),  alpha = 0.4, size =.3 )+
+        ggplot2::geom_density(alpha = 0.4, size = .15) +
+        ggplot2::geom_rug(ggplot2::aes(x = get(score_col), color = Set, y = 0),  alpha = 0.4, size =.1 )+
         ggplot2::scale_color_manual(values = unlist(site_colours), labels = unlist(site_names), name="Set")+
         ggplot2::scale_fill_manual(values = unlist(site_colours), labels = unlist(site_names), name="Set") + #theme(legend.position="none") +
         ggplot2::labs(title = enrichment_stats[i, 'pathway'] )+ theme_nature()+
@@ -214,11 +214,11 @@ OSEA <- function(stats_table,
         ggplot2::guides(fill = ggplot2::guide_legend(title = "", keywidth=0.25 ,keyheight=0.25, default.unit="cm"),
                         colour = ggplot2::guide_legend(title = "",keywidth=0.25 ,keyheight=0.25, default.unit="cm"))+
         ggplot2::theme(legend.justification=c(0,0), legend.position=c(.15,.7))+
-        ggplot2::annotate(geom="text", x= Inf, y = Inf, #hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
+        ggplot2::annotate(geom="text", x= Inf, y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
                           label=sprintf("p-value: %.4f\nn: %s out of %s\n%s",enrichment_stats[i, 'pval'], enrichment_stats[i,'n'],
-                                        enrichment_stats[i,'N'], Pathway.Subject) ,
+                                        enrichment_stats[i,'N'],Pathway.Subject) ,
                           color="black", size= 2.25, fontface="italic")+
-        ggplot2::annotate(geom="text", x= 0, y = Inf, #hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
+        ggplot2::annotate(geom="text", x= 0.0, y = Inf, hjust=1,vjust=1,#x=0,  y=Inf, vjust=2,
                           label=sprintf("Control") ,
                           color="black", size= 2.25, fontface="italic")+
         ggplot2::geom_vline( xintercept = 0, color="black", size = 0.1)+
