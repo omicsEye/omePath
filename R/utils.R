@@ -17,8 +17,8 @@ set_coloures <- function(){
 set_names <- function(){
   site_names <- list()
   # Legend entries will appear in the order given here
-  site_names$all_features <- "All omic fesatures in the community"
-  site_names$pathway <- "Omic features contributed in the pathway"
+  site_names$all_features <- "The rest of omics features"
+  site_names$pathway <- "Pathway's members"
   return(site_names)
 }
 

@@ -88,7 +88,6 @@ deepath <- function(input_data,
   #################################################################
   # is the metadata not provides then input data should be a score file
   if (is.na(input_metadata)) {
-    print("Yes")
     if (is.character(input_data)) {
       data <-
         data.frame(
