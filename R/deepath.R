@@ -87,14 +87,18 @@ deepath <- function(input_data,
   # Read in the data and metadata, create output folder, init log #
   #################################################################
   # is the metadata not provides then input data should be a score file
+  
+ 
   if (is.character(input_data)) {
     data <-
       data.frame(
-        data.table::fread(
+        read.delim(
           input_data,
+          sep = '\t',
           header = TRUE,
-          check.names = FALSE,
-          sep = "\t"
+          fill = T,
+          comment.char = "" ,
+          check.names = F
         ),
         row.names = 1
       )
@@ -144,113 +148,114 @@ deepath <- function(input_data,
   ###############################################################
   # Determine orientation of data in input and reorder to match #
   ###############################################################
-  
-  logging::loginfo("Determining format of input files")
-  samples_row_row <- intersect(rownames(data), rownames(metadata))
-  if (length(samples_row_row) > 0) {
-    # this is the expected formatting so do not modify data frames
-    logging::loginfo(paste(
-      "Input format is data samples",
-      "as rows and metadata samples as rows"
-    ))
-  } else {
-    samples_column_row <- intersect(colnames(data), rownames(metadata))
-    if (length(samples_column_row) > 0) {
+  if (!is.na(input_metadata)){
+    logging::loginfo("Determining format of input files")
+    samples_row_row <- intersect(rownames(data), rownames(metadata))
+    if (length(samples_row_row) > 0) {
+      # this is the expected formatting so do not modify data frames
       logging::loginfo(paste(
         "Input format is data samples",
-        "as columns and metadata samples as rows"
+        "as rows and metadata samples as rows"
       ))
-      # transpose data frame so samples are rows
-      data <- as.data.frame(t(data))
-      logging::logdebug("Transformed data so samples are rows")
     } else {
-      samples_column_column <-
-        intersect(colnames(data), colnames(metadata))
-      if (length(samples_column_column) > 0) {
-        logging::loginfo(
-          paste(
-            "Input format is data samples",
-            "as columns and metadata samples as columns"
-          )
-        )
+      samples_column_row <- intersect(colnames(data), rownames(metadata))
+      if (length(samples_column_row) > 0) {
+        logging::loginfo(paste(
+          "Input format is data samples",
+          "as columns and metadata samples as rows"
+        ))
+        # transpose data frame so samples are rows
         data <- as.data.frame(t(data))
-        metadata <- as.data.frame(t(metadata))
-        logging::logdebug("Transformed data and metadata so samples are rows")
+        logging::logdebug("Transformed data so samples are rows")
       } else {
-        samples_row_column <-
-          intersect(rownames(data), colnames(metadata))
-        if (length(samples_row_column) > 0) {
+        samples_column_column <-
+          intersect(colnames(data), colnames(metadata))
+        if (length(samples_column_column) > 0) {
           logging::loginfo(
             paste(
               "Input format is data samples",
-              "as rows and metadata samples as columns"
+              "as columns and metadata samples as columns"
             )
           )
+          data <- as.data.frame(t(data))
           metadata <- as.data.frame(t(metadata))
-          logging::logdebug("Transformed metadata so samples are rows")
+          logging::logdebug("Transformed data and metadata so samples are rows")
         } else {
-          logging::logerror(
-            paste(
-              "Unable to find samples in data and",
-              "metadata files.",
-              "Rows/columns do not match."
+          samples_row_column <-
+            intersect(rownames(data), colnames(metadata))
+          if (length(samples_row_column) > 0) {
+            logging::loginfo(
+              paste(
+                "Input format is data samples",
+                "as rows and metadata samples as columns"
+              )
             )
-          )
-          logging::logdebug("Data rows: %s",
-                            paste(rownames(data), collapse = ","))
-          logging::logdebug("Data columns: %s",
-                            paste(colnames(data), collapse = ","))
-          logging::logdebug("Metadata rows: %s",
-                            paste(rownames(metadata), collapse = ","))
-          logging::logdebug("Metadata columns: %s",
-                            paste(colnames(data), collapse = ","))
-          stop()
+            metadata <- as.data.frame(t(metadata))
+            logging::logdebug("Transformed metadata so samples are rows")
+          } else {
+            logging::logerror(
+              paste(
+                "Unable to find samples in data and",
+                "metadata files.",
+                "Rows/columns do not match."
+              )
+            )
+            logging::logdebug("Data rows: %s",
+                              paste(rownames(data), collapse = ","))
+            logging::logdebug("Data columns: %s",
+                              paste(colnames(data), collapse = ","))
+            logging::logdebug("Metadata rows: %s",
+                              paste(rownames(metadata), collapse = ","))
+            logging::logdebug("Metadata columns: %s",
+                              paste(colnames(data), collapse = ","))
+            stop()
+          }
         }
       }
     }
+    
+    # replace unexpected characters in feature names
+    #colnames(data) <- make.names(colnames(data))
+    
+    # check for samples without metadata
+    extra_feature_samples <-
+      setdiff(rownames(data), rownames(metadata))
+    if (length(extra_feature_samples) > 0)
+      logging::logdebug(
+        paste(
+          "The following samples were found",
+          "to have features but no metadata.",
+          "They will be removed. %s"
+        ),
+        paste(extra_feature_samples, collapse = ",")
+      )
+    
+    # check for metadata samples without features
+    extra_metadata_samples <-
+      setdiff(rownames(metadata), rownames(data))
+    if (length(extra_metadata_samples) > 0)
+      logging::logdebug(
+        paste(
+          "The following samples were found",
+          "to have metadata but no features.",
+          "They will be removed. %s"
+        ),
+        paste(extra_metadata_samples, collapse = ",")
+      )
+    
+    # get a set of the samples with both metadata and features
+    intersect_samples <-
+      intersect(rownames(data), rownames(metadata))
+    logging::logdebug(
+      "A total of %s samples were found in both the data and metadata",
+      length(intersect_samples)
+    )
+    
+    # now order both data and metadata with the same sample ordering
+    logging::logdebug("Reordering data/metadata to use same sample ordering")
+    data <- data[intersect_samples, , drop = FALSE]
+    metadata <- metadata[intersect_samples, , drop = FALSE]
   }
-  
-  # replace unexpected characters in feature names
-  #colnames(data) <- make.names(colnames(data))
-  
-  # check for samples without metadata
-  extra_feature_samples <-
-    setdiff(rownames(data), rownames(metadata))
-  if (length(extra_feature_samples) > 0)
-    logging::logdebug(
-      paste(
-        "The following samples were found",
-        "to have features but no metadata.",
-        "They will be removed. %s"
-      ),
-      paste(extra_feature_samples, collapse = ",")
-    )
-  
-  # check for metadata samples without features
-  extra_metadata_samples <-
-    setdiff(rownames(metadata), rownames(data))
-  if (length(extra_metadata_samples) > 0)
-    logging::logdebug(
-      paste(
-        "The following samples were found",
-        "to have metadata but no features.",
-        "They will be removed. %s"
-      ),
-      paste(extra_metadata_samples, collapse = ",")
-    )
-  
-  # get a set of the samples with both metadata and features
-  intersect_samples <-
-    intersect(rownames(data), rownames(metadata))
-  logging::logdebug(
-    "A total of %s samples were found in both the data and metadata",
-    length(intersect_samples)
-  )
-  
-  # now order both data and metadata with the same sample ordering
-  logging::logdebug("Reordering data/metadata to use same sample ordering")
-  data <- data[intersect_samples, , drop = FALSE]
-  metadata <- metadata[intersect_samples, , drop = FALSE]
   
   
   # create an output folder and figures folder if it does not exist
@@ -339,11 +344,11 @@ deepath <- function(input_data,
   logging::loginfo("Writing stats table to file %s", stats_file)
   write.table(
     stats_table,
-    file = stats_file,
+    stats_file,
     sep = "\t",
-    quote = FALSE,
-     row.names =
-      FALSE
+    eol = "\n",
+    col.names = NA,
+    row.names = T
    )
   
   logging::loginfo("Running selected analysis method: %s", method)
@@ -351,6 +356,7 @@ deepath <- function(input_data,
     stats_table = stats_table,
     score_col = score_col,
     pval_threshold = pval_threshold,
+    fdr_threshold = fdr_threshold,
     Pathway.Subject = Pathway.Subject,
     output = output,
     do_plot = do_plot,
@@ -374,14 +380,14 @@ deepath <- function(input_data,
     unlink(enrichment_stats_file)
   }
   logging::loginfo("Writing enrichment stats table to file %s", enrichment_stats_file)
-  #write.table(
-  #  results$enrichment_stats,
-  #  file = enrichment_stats_file,
-  #  sep = "\t",
-  #  quote = FALSE,
- #   row.names =
-  #    FALSE
- # )
+  write.table(
+    results$enrichment_stats,
+    file = enrichment_stats_file,
+    sep = "\t",
+    eol = "\n",
+    col.names = NA,
+    row.names = T
+  )
   
   #######################################################
   # Create visualizations for results passing threshold #

@@ -1,7 +1,7 @@
 
 
 # load in the required libraries, report an error if they are not installed
-for (lib in c('gsEasy', 'future', 'limma', 'ggplot2')) {
+for (lib in c('gsEasy', 'future', 'ggplot2')) {
   if (!suppressPackageStartupMessages(require(lib, character.only = TRUE)))
     stop(paste("Please install the R package: ", lib))
 }
@@ -187,15 +187,7 @@ OSEA <- function(stats_table,
     )
   enrichment_stats <-
     enrichment_stats[order(enrichment_stats["pval"]), ]
-  # write stats in the output
-  write.table(
-    enrichment_stats,
-    paste(output, '/enrichment_stats.txt', sep = ''),
-    sep = "\t",
-    eol = "\n",
-    col.names = NA,
-    row.names = T
-  )
+  
   #make barcodeplot
   
   #print("Now time for  barcodeplots!")
@@ -215,7 +207,7 @@ OSEA <- function(stats_table,
   logging::loginfo("Plotting data for %s, %s", "feature", "enrichment")
   pdf(
     paste(output, '/enrichment_plots.pdf', sep = ''),
-    width = 2.5,
+    width = 2.4,
     height = 2.25,
     onefile = TRUE
   )
