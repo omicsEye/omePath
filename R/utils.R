@@ -4,17 +4,21 @@
 #source("https://bioconductor.org/biocLite.R")
 #biocLite("limma")
 for (lib in c('dplyr', 'readr', 'downloader', 'logging')) {
-  if (!suppressPackageStartupMessages(require(lib, character.only = TRUE)) ) stop(paste("Please install the R package: ",lib))
+  if (!suppressPackageStartupMessages(require(lib, character.only = TRUE)))
+    stop(paste("Please install the R package: ", lib))
 }
-set_coloures <- function(){
+set_coloures <- function() {
   site_colours <- list()
   site_colours$Reference_genome <- "white"
-  site_colours$all_features <- rgb(0, 38, 84, maxColorValue = 255) #"gray60"
-  site_colours$pathway <- 'darkgoldenrod' #rgb(226, 203, 146, maxColorValue = 255) #"orange"
+  site_colours$all_features <-
+    rgb(0, 38, 84, maxColorValue = 255) #"gray60"
+  site_colours$pathway <-
+    'darkgoldenrod' #rgb(226, 203, 146, maxColorValue = 255) #"orange"
   return(site_colours)
+  
 }
 #-------------------------------------------------------------------------------------------------
-set_names <- function(){
+set_names <- function() {
   site_names <- list()
   # Legend entries will appear in the order given here
   site_names$all_features <- "The rest of omics features"
@@ -22,87 +26,116 @@ set_names <- function(){
   return(site_names)
 }
 
-load_pathway2HMDBID <- function(path, pthahway_col_number = 3, hmdb_col_number = 7){
-  set_elements_mapper <- scan(gzfile(path), character(), what="", sep="\n") # header=F, fill=TRUE,
-  y <- strsplit(set_elements_mapper, "\t")
-
-  #remove the first line
-  y <- y[-1]
-
-  mapper <- list()
-  for (value in y){
-    #print(mapper[value[2]])
-    if (is.null(mapper[[value[3]]]))
-      mapper[value[3]] <- value[7]
-    else {
-      temp_list <- append(mapper[[value[3]]], value[7])
-      mapper[value[3]] <- NULL
-      mapper[value[3]] <- list(temp_list)
+load_pathway2HMDBID <-
+  function(path,
+           pthahway_col_number = 3,
+           hmdb_col_number = 7) {
+    set_elements_mapper <-
+      scan(gzfile(path), character(), what = "", sep = "\n") # header=F, fill=TRUE,
+    y <- strsplit(set_elements_mapper, "\t")
+    
+    #remove the first line
+    y <- y[-1]
+    
+    mapper <- list()
+    for (value in y) {
+      #print(mapper[value[2]])
+      if (is.null(mapper[[value[3]]]))
+        mapper[value[3]] <- value[7]
+      else {
+        temp_list <- append(mapper[[value[3]]], value[7])
+        mapper[value[3]] <- NULL
+        mapper[value[3]] <- list(temp_list)
+      }
     }
+    return (mapper)
   }
-  return (mapper)
-}
-downloadMappingFiles <- function(db_path){
+downloadMappingFiles <- function(db_path) {
   # Download from http://smpdb.ca/downloads
   logging::loginfo("Start downloading the SMPDB metabolites database!")
   url <- 'http://smpdb.ca/downloads/smpdb_metabolites.csv.zip'
-  download(url, dest=paste(db_path,"/smpdb_metabolites.csv.zip", sep=''), mode="wb")
-
+  download(
+    url,
+    dest = paste(db_path, "/smpdb_metabolites.csv.zip", sep = ''),
+    mode = "wb"
+  )
+  
   # extract the zip file to smpdb_metabolites
-  unzip (paste(db_path,"/smpdb_metabolites.csv.zip", sep=''), exdir = paste(db_path,"/smpdb_metabolites", sep =''))
+  unzip (
+    paste(db_path, "/smpdb_metabolites.csv.zip", sep = ''),
+    exdir = paste(db_path, "/smpdb_metabolites", sep = '')
+  )
   logging::loginfo("Downloading the SMPDB metabolites database is Done!")
 }
-merge_cvs <- function(input_dir_path, outputfile){
+merge_cvs <- function(input_dir_path, outputfile) {
   # Download from http://smpdb.ca/downloads
   # extract the zip file to smpdb_metabolites
   #input_dir_path = "~/Downloads/smpdb_metabolites"
   #outputfile = '/Users/rah/Documents/Metabolomics/example_data/HMDB/merged_ref_db.csv'
   library(dplyr)
   library(readr)
-  df <- list.files(path=input_dir_path, full.names = TRUE) %>%
+  df <- list.files(path = input_dir_path, full.names = TRUE) %>%
     lapply(read_csv) %>%
     bind_rows
-  write_csv( df, outputfile)
+  write_csv(df, outputfile)
 }
-setup_smpdb_metabolites_db <- function(db_path, force = FALSE, rm_intermediate_files = TRUE ){
-
-  #Check its existence
-  if (file.exists(paste(db_path,"/smpdb_metabolites.csv", sep =''))){
-
-    #Delete file if it exist
-    if (force)
-      file.remove(paste(db_path,"/smpdb_metabolites.csv", sep =''))
-    else {
-      print(sprintf("The %s is exist! If you wish to overwrite it p lease use force =TRUE in the function parameters.",
-                      paste(db_path,"/smpdb_metabolites.csv", sep ='')))
-      return(paste(db_path,"/smpdb_metabolites.csv", sep =''))
+setup_smpdb_metabolites_db <-
+  function(db_path,
+           force = FALSE,
+           rm_intermediate_files = TRUE) {
+    #Check its existence
+    if (file.exists(paste(db_path, "/smpdb_metabolites.csv", sep = ''))) {
+      #Delete file if it exist
+      if (force)
+        file.remove(paste(db_path, "/smpdb_metabolites.csv", sep = ''))
+      else {
+        print(
+          sprintf(
+            "The %s is exist! If you wish to overwrite it p lease use force =TRUE in the function parameters.",
+            paste(db_path, "/smpdb_metabolites.csv", sep = '')
+          )
+        )
+        return(paste(db_path, "/smpdb_metabolites.csv", sep = ''))
+      }
     }
-  }
     # create an output folder if it does not exist
-  if (!file.exists(db_path)) {
-    print("Creating database path folder ...")
-    dir.create(db_path)
+    if (!file.exists(db_path)) {
+      print("Creating database path folder ...")
+      dir.create(db_path)
+    }
+    # download files and put them to the db_path
+    logging::logdebug("Downloading SMPDB metabolites database started and will located under %s.",
+                      db_path)
+    downloadMappingFiles(db_path)
+    logging::logdebug("Downloading process is done!")
+    logging::logdebug("Merging all files ...")
+    merge_cvs(
+      paste(db_path, "/smpdb_metabolites", sep = ''),
+      paste(db_path, "/smpdb_metabolites.csv", sep = '')
+    )
+    logging::logdebug("Merging all files is done!")
+    # clean intermdiate data
+    if (rm_intermediate_files) {
+      file.remove(paste(db_path, "/smpdb_metabolites.csv.zip", sep = ''))
+      unlink(paste(db_path, "/smpdb_metabolites", sep = ''), recursive = T)
+    }
+    logging::logdebug(
+      "The SMPDB metabolites database i created under %s.",
+      paste(db_path, "/smpdb_metabolites.csv", sep = '')
+    )
+    return(paste(db_path, "/smpdb_metabolites.csv", sep = ''))
   }
-  # download files and put them to the db_path
-  logging::logdebug("Downloading SMPDB metabolites database started and will located under %s.",db_path)
-  downloadMappingFiles(db_path)
-  logging::logdebug("Downloading process is done!")
-  logging::logdebug("Merging all files ...")
-  merge_cvs(paste(db_path,"/smpdb_metabolites", sep =''), paste(db_path,"/smpdb_metabolites.csv", sep =''))
-  logging::logdebug("Merging all files is done!")
-  # clean intermdiate data
-  if (rm_intermediate_files){
-    file.remove(paste(db_path,"/smpdb_metabolites.csv.zip", sep=''))
-    unlink(paste(db_path,"/smpdb_metabolites", sep=''), recursive = T)
-  }
-  logging::logdebug("The SMPDB metabolites database i created under %s.",paste(db_path,"/smpdb_metabolites.csv", sep =''))
-  return(paste(db_path,"/smpdb_metabolites.csv", sep =''))
-}
 
-gpd_permutation_test <- function(x0, y, minM_epdf = 10,
-                                 Nexc = 250, Nexc_shrink = 10, Nexc_alpha = 0.05,
-                                 yfun, ystart = 200, ygrow = 100, ymax = 5000) {
-  
+gpd_permutation_test <- function(x0,
+                                 y,
+                                 minM_epdf = 10,
+                                 Nexc = 250,
+                                 Nexc_shrink = 10,
+                                 Nexc_alpha = 0.05,
+                                 yfun,
+                                 ystart = 200,
+                                 ygrow = 100,
+                                 ymax = 5000) {
   # Implementation of the GPD-based p-value estimation algorithm from
   # Knijnenburg, Wessels, Reinders, and Shmulevich (2009) Fewer
   # permutations, more accurate P-values. Bioinformatics 25(12): i161–i168.
@@ -112,10 +145,12 @@ gpd_permutation_test <- function(x0, y, minM_epdf = 10,
   if (missing(y)) {
     # Automatic sampling of y
     stopifnot(!missing(yfun))
-    y <- sapply(rep(NA, ystart), function(i)yfun())
+    y <- sapply(rep(NA, ystart), function(i)
+      yfun())
     
     while (sum(y > x0) < minM_epdf && length(y) < ymax) {
-      y <- c(y, sapply(rep(NA, ygrow), function(i)yfun()))
+      y <- c(y, sapply(rep(NA, ygrow), function(i)
+        yfun()))
     }
   }
   
@@ -129,14 +164,17 @@ gpd_permutation_test <- function(x0, y, minM_epdf = 10,
   library("extRemes")
   while (T) {
     # Fit a GPD
-    t <- mean(y[max(ceiling(length(y)/2), length(y) - Nexc) + c(0, 1)])
-    fit <- fevd(y, threshold = t, type="GP")
+    t <-
+      mean(y[max(ceiling(length(y) / 2), length(y) - Nexc) + c(0, 1)])
+    fit <- fevd(y, threshold = t, type = "GP")
     
     # Test goodness-of-fit
-    gof <- ks.test(pextRemes(fit, y[y>t]), punif)
+    gof <- ks.test(pextRemes(fit, y[y > t]), punif)
     if (Nexc <= 50 || gof$p.value >= Nexc_alpha) {
       if (Nexc <= 50) {
-        warning("GPD fit to tail samples fits poorly even with (<= 50) null samples. Consider adding more null samples.")
+        warning(
+          "GPD fit to tail samples fits poorly even with (<= 50) null samples. Consider adding more null samples."
+        )
       }
       # Didn't reject.. fit is good enough
       break
@@ -146,9 +184,7 @@ gpd_permutation_test <- function(x0, y, minM_epdf = 10,
   }
   
   # Get the p-value estimate from the fit
-  p <- mean(y>t) * pextRemes(fit, x0, lower.tail=F)
+  p <- mean(y > t) * pextRemes(fit, x0, lower.tail = F)
   
   return (p)
 }
-
-

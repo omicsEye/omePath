@@ -3,7 +3,7 @@
 ###############################################################################
 # deepath
 
-# Copyright (c) 2019 the Broad Institute of MIT and Harvard
+# Copyright (c) 2019 the Rahnavard Lab at The George Washington University
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -88,7 +88,7 @@ deepath <- function(input_data,
   #################################################################
   # is the metadata not provides then input data should be a score file
   
- 
+  
   if (is.character(input_data)) {
     data <-
       data.frame(
@@ -148,7 +148,7 @@ deepath <- function(input_data,
   ###############################################################
   # Determine orientation of data in input and reorder to match #
   ###############################################################
-  if (!is.na(input_metadata)){
+  if (!is.na(input_metadata)) {
     logging::loginfo("Determining format of input files")
     samples_row_row <- intersect(rownames(data), rownames(metadata))
     if (length(samples_row_row) > 0) {
@@ -349,10 +349,10 @@ deepath <- function(input_data,
     eol = "\n",
     col.names = NA,
     row.names = T
-   )
+  )
   
   logging::loginfo("Running selected analysis method: %s", method)
-  results <- OSEA(
+  enrichment_stats <- OSEA(
     stats_table = stats_table,
     score_col = score_col,
     pval_threshold = pval_threshold,
@@ -379,16 +379,36 @@ deepath <- function(input_data,
                      enrichment_stats_file)
     unlink(enrichment_stats_file)
   }
-  logging::loginfo("Writing enrichment stats table to file %s", enrichment_stats_file)
+  logging::loginfo("Writing enrichment stats table to file %s",
+                   enrichment_stats_file)
   write.table(
-    results$enrichment_stats,
+    enrichment_stats,
     file = enrichment_stats_file,
     sep = "\t",
     eol = "\n",
+    quote = F,
     col.names = NA,
     row.names = T
   )
   
+  #########################
+  # visualize the results #
+  #########################
+  plot_results <- enrichment_plot(
+    stats_table = stats_table,
+    enrichment_stats = enrichment_stats,
+    score_col = score_col,
+    pval_threshold = pval_threshold,
+    fdr_threshold = fdr_threshold,
+    Pathway.Subject = Pathway.Subject,
+    output = output,
+    do_plot = do_plot,
+    mapper_file = mapper_file,
+    method = method,
+    min_member = min_member,
+    pathway_col = pathway_col,
+    feature_col = feature_col
+  )
   #######################################################
   # Create visualizations for results passing threshold #
   #######################################################
@@ -399,6 +419,10 @@ deepath <- function(input_data,
       output
     )
   }
+  results <- list()
+  results$enrichment_stats <- enrichment_stats
+  results$rank_plots <- plot_results$rank_plots
+  results$score_plots <- plot_results$score_plots
   
   return(results)
 }

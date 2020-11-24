@@ -67,17 +67,22 @@ Users can bring their own mapping files (pathways-omics) with the following form
 
 * One of the columns should be labled as `Pathway`. ....
 * One of the columns should be labled as `Feature`.
-* The table should be a `csv` format file.
+* The table should be a  tab-delimited text file (`tsv`).
 * Input file columns should have consistent labels.
     
 We provide mapping files (pathways-feature) for four main omics:
 
 * Metagenomics: Microbial genes pathways (GO terms - UniRef90)
-* coming soon
+
+* The Molecular Signatures Database (MSigDB), C5: ontology gene sets including 14765 gene sets
+    * Please download the preprocessed mapping file at [HERE](https://www.dropbox.com/s/zlobyzn92r43nqy/c5.all.v7.1.entrez.tsv?dl=0)
+
+
 * Metabolomics: (Metabolic Pathways - Metabolites HMDBID)
-* Please download the preprocessed mapping file at [HERE](https://www.dropbox.com/s/rzx6hsq7xmr87te/smpdb_metabolites.txt?dl=0)
+    * Please download the preprocessed mapping file at [HERE](https://www.dropbox.com/s/rzx6hsq7xmr87te/smpdb_metabolites.tsv?dl=0)
+    
+
 * Proteomics: coming soon
-* Genomics: coming soon
 
 
 ### Input files format ###

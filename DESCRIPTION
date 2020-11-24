@@ -20,7 +20,7 @@ Suggests:
     knitr,
     testthat (>= 2.1.0)
 VignetteBuilder: knitr
-Collate: deepath.R OSEA.R utils.R theme_omicsEye.R score.R
+Collate: deepath.R OSEA.R utils.R theme_omicsEye.R score.R viz.R
 URL: https://www.rahnavard.org/deepath
 biocViews: Omics, Software, Enrichment, Analysis
 BugReports: https://github.com/omicsEye/deepath/issues
