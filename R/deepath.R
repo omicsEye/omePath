@@ -386,9 +386,9 @@ deepath <- function(input_data,
     file = enrichment_stats_file,
     sep = "\t",
     eol = "\n",
-    quote = F,
-    col.names = NA,
-    row.names = T
+    col.names = T,
+    row.names = T,
+    quote = F
   )
   
   #########################
