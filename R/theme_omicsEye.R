@@ -37,7 +37,7 @@ theme_omicsEye <- function()
             legend.key.size    = ggplot2::unit(8, "pt"),
             legend.box.spacing = ggplot2::unit(4, "pt"),
             panel.spacing      = ggplot2::unit(1.5, "pt"),
-            plot.title         = ggplot2::element_text(size = 8),
+            plot.title         = ggplot2::element_text(size = 8, face = "bold"),
             plot.margin        = ggplot2::margin(1, 1, 1, 1),
             strip.background   = ggplot2::element_blank(),
             strip.text         = ggplot2::element_text(size = 6),

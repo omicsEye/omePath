@@ -96,6 +96,9 @@ deepath requires a mapper file that can be downloaded from [previouse step](#dow
 
 1. Approach one: providing the score file and mapping file:
 
+In this approach, a tab-delimited text file or a R dataframe with row names being the features need to be provided.
+The file should have a column which will be used as the score for enrichment analysis. 
+
 [deepath demo](https://github.com/omicsEye/deepath/tree/master/demo)
 
 |               |  logFC         |  statistic  |  P.Value
