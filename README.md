@@ -88,15 +88,14 @@ We provide mapping files (pathways-feature) for four main omics:
 ### Input files format ###
 
 * all input files should be tab-delimited formatted  
- 
+* deepath requires a mapper file that can be downloaded from [previouse step](#download_the_mapping_database) an input files.
+
 #### Two approaches of run *deepath* ####
 
-deepath requires a mapper file that can be downloaded from [previouse step](#download_the_mapping_database) an input files.
 
+1. Providing the score file and mapping file:
 
-1. Approach one: providing the score file and mapping file:
-
-In this approach, a tab-delimited text file or a R dataframe with row names being the features need to be provided.
+In this approach, a tab-delimited text file or a R data frame with row names being the features need to be provided.
 The file should have a column which will be used as the score for enrichment analysis. 
 
 [deepath demo](https://github.com/omicsEye/deepath/tree/master/demo)
@@ -122,7 +121,7 @@ HMDB00725       |  0.070803166   |  92         |  0.265669584
 
 and continues ... 
 
-2. Approach two: providing a data and a metadata file to calculate a score for feature (currenlty logFC). providing data, metadata, and mapping file: this allows to score features using provides function by deepath such as logFC.
+2. Providing a data and a metadata file to calculate a score for feature (currenlty logFC). providing data, metadata, and mapping file: this allows to score features using provides function by deepath such as logFC.
 
 * Data (or features) file : This file is tab-delimited formatted with features as columns and samples as rows (the transpose is also okay).
 
@@ -161,13 +160,32 @@ deepath_results <- deepath(input_data,
 
 ```
 
-If you use approach one (providing score file and mapping file), then yo need to specify:
+If you use approach 1 (providing score file and mapping file), then yo need to specify:
 
 * `input_data` will be your score file with row names your features and a column for your scores (e.g. 'logFC')
 
 * `score_col` identifies your score column in th e`input_file`, default i s`logFC`
 
+* `mapper_file` should have at least two columns to map pathways ("Pathway" column by default) to feature ("Feature" column by default).
+
+* `pathway_col` identifies pathways column in the `mapper_file`, default is "Pathway"
+
+* `feature_col` identifies features column in the `mapper_file`, default is "Feature"
+
+If you use approach 2 then you need to specify:
+
+* `input_data` will be your score file with row names your features and a column for your scores (e.g. 'logFC')
+
+* `input_metadata` identifies your score column in th e`input_file`, default i s`logFC`
+
 * `mapper_file` should have at leatst two columns to map pathways ("Pathway" column by default) to feature ("Feature" column by default).
+
+* `meta` is the name o fteh column in metadata that has the case and control groups and need to 
+be used for calculating score (e.g., Diagnosis).
+
+* `case_label` is the label used for the case group in `meta` column (e.g., 'UC' or 'Ulcerative Colitis') 
+
+* `control_label`is the label used for the control group in `meta` column (e.g., 'non-IBD') 
 
 * `pathway_col` identifes pathways column in the `mapper_file`, default is "Pathway"
 
