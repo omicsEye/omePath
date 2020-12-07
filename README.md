@@ -160,36 +160,37 @@ deepath_results <- deepath(input_data,
 
 ```
 
-If you use approach 1 (providing score file and mapping file), then yo need to specify:
+Required option for both running approaches:
 
-* `input_data` will be your score file with row names your features and a column for your scores (e.g. 'logFC')
-
-* `score_col` identifies your score column in th e`input_file`, default i s`logFC`
-
-* `mapper_file` should have at least two columns to map pathways ("Pathway" column by default) to feature ("Feature" column by default).
+* `mapper_file` should have at least two columns to map pathways ("Pathway" column by default) to feature ("Feature" column by default). Different mapper files could use different column labels for pathways (e.g, 'Pathway', 'KEGG', and 'GO') and 
+feature (e.g, 'Feature', 'metabolites', and 'HMBD_ID', 'Gene', 'Ensembl_ID')
 
 * `pathway_col` identifies pathways column in the `mapper_file`, default is "Pathway"
 
 * `feature_col` identifies features column in the `mapper_file`, default is "Feature"
 
-If you use approach 2 then you need to specify:
 
-* `input_data` will be your score file with row names your features and a column for your scores (e.g. 'logFC')
+In running approach 1 (providing score file and mapping file), following data files need to be specified:
 
-* `input_metadata` identifies your score column in th e`input_file`, default i s`logFC`
+* `input_data` will be your score file with row names your features and a column for your scores (e.g. 'logFC' and 'coef')
 
-* `mapper_file` should have at leatst two columns to map pathways ("Pathway" column by default) to feature ("Feature" column by default).
+* `score_col` identifies your score column in th e`input_file`, default is `logFC`
 
-* `meta` is the name o fteh column in metadata that has the case and control groups and need to 
+
+In running approach 2 following data files need to be specified::
+
+* `input_data` will be omics profile data with N rows by D columns where N are samples and D are features. 
+
+* `input_metadata` identifies your metadata file with N rows by M columns where N are samples and M are metadata. 
+
+
+* `meta` is the name of teh column in metadata that has the case and control groups and need to 
 be used for calculating score (e.g., Diagnosis).
 
 * `case_label` is the label used for the case group in `meta` column (e.g., 'UC' or 'Ulcerative Colitis') 
 
 * `control_label`is the label used for the control group in `meta` column (e.g., 'non-IBD') 
 
-* `pathway_col` identifes pathways column in the `mapper_file`, default is "Pathway"
-
-* `feature_col` identifes features column in the `mapper_file`, default is "Feature"
 
 ### Output Files ###
 
