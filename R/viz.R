@@ -64,13 +64,13 @@ enrichment_plot <- function(
     stats <- stats_table
   }
   stats <- stats[!is.na(stats[score_col]), , drop = F]
-  stats$Rank <- NA
+  stats$score_rank <- NA
   if (score_col == 'P.Value') {
     stats <- stats[order(-stats[score_col]), ]
   } else{
     stats <- stats[order(stats[score_col]), ]
   }
-  stats$Rank <- seq.int(nrow(stats))
+  stats$score_rank <- seq.int(nrow(stats))
   
   pathways <-
     unique(unlist(lapply(mapper_pathway2feature[pathway_col], as.character)))
@@ -118,16 +118,16 @@ enrichment_plot <- function(
       stats$Rug <- NA
       stats$Rug[indx] <- 'pathway'
       
-      ### plot the enrichment based on rank ####################
+      ### plot the enrichment based on score_rank ####################
       density_plot <-
         ggplot2::ggplot(stats, ggplot2::aes(
-          x = Rank,
+          x = score_rank,
           fill = Set,
           color = Set
         ))
       density_plot <- density_plot +
         ggplot2::geom_density(alpha = 0.4, size = .15) +
-        ggplot2::geom_rug(ggplot2::aes(x = Rank, color = Rug, y = 0),
+        ggplot2::geom_rug(ggplot2::aes(x = score_rank, color = Rug, y = 0),
                           alpha = 0.4,
                           size = .1) +
         ggplot2::scale_color_manual(
@@ -178,7 +178,7 @@ enrichment_plot <- function(
         ) +
         ggplot2::annotate(
           geom = "text",
-          x = median(stats$Rank),
+          x = median(score_rank),
           y = Inf,
           hjust = 1,
           vjust = 1,
@@ -188,7 +188,7 @@ enrichment_plot <- function(
           size = 2.25,
           fontface = "italic"
         ) +
-        ggplot2::geom_vline(ggplot2::aes(xintercept = median(stats$Rank)),
+        ggplot2::geom_vline(ggplot2::aes(xintercept = median(score_rank)),
                             color = "black",
                             size = 0.1) +
         

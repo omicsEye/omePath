@@ -74,13 +74,13 @@ OSEA <- function(stats_table,
     stats <- stats_table
   }
   stats <- stats[!is.na(stats[score_col]), , drop = F]
-  stats$Rank <- NA
+  stats$score_rank <- NA
   if (score_col == 'P.Value') {
     stats <- stats[order(-stats[score_col]), ]
   } else{
     stats <- stats[order(stats[score_col]), ]
   }
-  stats$Rank <- seq.int(nrow(stats))
+  stats$score_rank <- seq.int(nrow(stats))
   
   enrichment_stats <-
     data.frame(
@@ -113,7 +113,7 @@ OSEA <- function(stats_table,
     if (method == 'ks') {
       indx <- match(pathway_members_in_study, rownames(stats))
       if (length(indx) > 0) {
-        stats_val <- ks.test(indx, stats$Rank)
+        stats_val <- ks.test(indx, stats$score_rank)
         pval <- stats_val$p.value
       } else
         pval <- 1.0
@@ -129,7 +129,7 @@ OSEA <- function(stats_table,
     } else if (method == 'wilcox') {
       indx <- match(pathway_members_in_study, rownames(stats))
       if (length(indx) > 0) {
-        stats_val <- wilcox.test(indx, stats$Rank)
+        stats_val <- wilcox.test(indx, stats$score_rank)
         pval <- stats_val$p.value
       } else
         pval <- 1.0
