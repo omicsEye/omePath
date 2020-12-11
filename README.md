@@ -18,15 +18,23 @@ If you have questions, please submit it as an issue using [deepath issue tracker
     * [Run a Demo](#run-a-demo)
     * [Options](#options)
 * [Visualization](#visualization)
+* [Example of real world applications](#example-of-real-world-applications)
+    * [Dyanmic of omics in pregenancy](#Dyanmic-of-omics-in-pregenancy)
 * [Troubleshooting](#troubleshooting)
 
 ## Description ##
 
-deepath was developed to ... 
+*deepath* provide enrichment analysis techniques with following properties:
+
+* A general-purpose enrichment applicable for any omics data.
+
+* Benchmarking existing tools by providing options to user to choose appropriate methods.
+
+* Manuscript quality reports and visualizations 
 
 ## Requirements ##
 
-deepath is an R package that can be run on the command line or as an R function. It requires the following R packages included in Bioconductor and CRAN (Comprehensive R Archive Network). Please install these packages before running deepath.
+deepath is an R package that can be run on the command line or as an R function. It requires the following R packages included in Bioconductor and CRAN (Comprehensive R Archive Network). Please install these packages before running *deepath*.
 
 * Only for Windows OS:
     * ``Install Rtools:`` https://cran.r-project.org/bin/windows/Rtools/
@@ -237,6 +245,16 @@ Run deepath help to print a list of the options and the default settings.
 ``fdr_threshold``: a threshold used to visualize only pathways with enrichment q-value (FDR) less or equal to it, and the default is NA. If the value is not NA then overwrites the ``pval_threshold`` condition.
 
 [[/img/enrichment_rank_based_plot.png|alt=Enrichment Plot]]
+
+## Example of Real world applications ##
+
+
+### Dyanmic of omics in pregenancy ###
+
+**Application 1**: longitudinal study of the vaginal, gut, and oral microbiomes in 292 samples from 10 subjects sampled every three weeks throughout pregnancy.
+
+Data ref: Goltsman, D.S.A., Sun, C.L. and Proctor, D.M., Metagenomic analysis with strain-level resolution reveals fine-scale variation in the human pregnancy microbiome. bioRxiv. 2018
+
 
 ## Troubleshooting ##
 

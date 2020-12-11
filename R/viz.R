@@ -121,13 +121,13 @@ enrichment_plot <- function(
       ### plot the enrichment based on score_rank ####################
       density_plot <-
         ggplot2::ggplot(stats, ggplot2::aes(
-          x = score_rank,
+          x = stats$score_rank,
           fill = Set,
           color = Set
         ))
       density_plot <- density_plot +
         ggplot2::geom_density(alpha = 0.4, size = .15) +
-        ggplot2::geom_rug(ggplot2::aes(x = score_rank, color = Rug, y = 0),
+        ggplot2::geom_rug(ggplot2::aes(x = stats$score_rank, color = Rug, y = 0),
                           alpha = 0.4,
                           size = .1) +
         ggplot2::scale_color_manual(
@@ -178,7 +178,7 @@ enrichment_plot <- function(
         ) +
         ggplot2::annotate(
           geom = "text",
-          x = median(score_rank),
+          x = median(stats$score_rank),
           y = Inf,
           hjust = 1,
           vjust = 1,
@@ -188,7 +188,7 @@ enrichment_plot <- function(
           size = 2.25,
           fontface = "italic"
         ) +
-        ggplot2::geom_vline(ggplot2::aes(xintercept = median(score_rank)),
+        ggplot2::geom_vline(ggplot2::aes(xintercept = median(stats$score_rank)),
                             color = "black",
                             size = 0.1) +
         
