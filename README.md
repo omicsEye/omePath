@@ -108,7 +108,7 @@ The file should have a column which will be used as the score for enrichment ana
 
 [deepath demo](https://github.com/omicsEye/deepath/tree/master/demo)
 
-|               |  logFC         |  statistic  |  P.Value
+|               |  coef         |  statistic  |  P.Value
 ----------------|----------------|-------------|-------------
 HMDB00696       |  -0.066838102  |  60         |  0.513722581
 HMDB00191       |  -0.167002899  |  68         |  0.84283599
@@ -150,20 +150,20 @@ library(deepath)
 # call the function
 deepath_results <- deepath(input_data,
                     output,
+                    mapper_file, 
+                    pathway_col = "Pathway",
+                    feature_col = "Feature",
                     input_metadata = NA,
                     meta = NA,
                     case_label = NA,
                     control_label = NA,
-                    score_col = 'logFC',
+                    score_col = 'coef',
                     pval_threshold = 0.05,
                     fdr_threshold = NA,
                     Pathway.Subject = NA,
                     method = 'ks',
                     min_member = 2,
-                    mapper_file = NA,
-                    do_plot = TRUE,
-                    pathway_col = "Pathway",
-                    feature_col = "Feature")
+                    do_plot = TRUE)
                     
 
 ```

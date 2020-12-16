@@ -68,6 +68,9 @@ method_choices <- c("gset", "ks", 'wilcox')
 #' @export
 deepath <- function(input_data,
                     output,
+                    mapper_file,
+                    pathway_col = "Pathway",
+                    feature_col = "Feature",
                     input_metadata = NA,
                     meta = NA,
                     case_label = NA,
@@ -78,10 +81,7 @@ deepath <- function(input_data,
                     Pathway.Subject = NA,
                     method = 'ks',
                     min_member = 2,
-                    mapper_file = NA,
-                    do_plot = TRUE,
-                    pathway_col = "Pathway",
-                    feature_col = "Feature")
+                    do_plot = TRUE)
 {
   #################################################################
   # Read in the data and metadata, create output folder, init log #
@@ -355,16 +355,17 @@ deepath <- function(input_data,
   enrichment_stats <- OSEA(
     stats_table = stats_table,
     score_col = score_col,
+    mapper_file = mapper_file,
+    pathway_col = pathway_col,
+    feature_col = feature_col,
     pval_threshold = pval_threshold,
     fdr_threshold = fdr_threshold,
     Pathway.Subject = Pathway.Subject,
     output = output,
     do_plot = do_plot,
-    mapper_file = mapper_file,
     method = method,
-    min_member = min_member,
-    pathway_col = pathway_col,
-    feature_col = feature_col
+    min_member = min_member
+    
   )
   
   #########################
