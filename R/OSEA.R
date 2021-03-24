@@ -155,7 +155,7 @@ OSEA <- function(stats_table,
     p.adjust(enrichment_stats$pval, method = 'BH')
   if (dim(enrichment_stats)[1] == 0)
     stop(
-      "No pathwasy found with minumu number of features!!!\nPlease make sure your your mapping files includes your features!!!"
+      "No pathway found with minimum number of features!!!\nPlease make sure your mapping files includes your features!!!"
     )
   enrichment_stats <-
     enrichment_stats[order(enrichment_stats["pval"]), ]

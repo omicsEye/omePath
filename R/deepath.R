@@ -65,6 +65,38 @@ method_choices <- c("gset", "ks", 'wilcox')
 ##########################################################################################
 # Main deepath function with defaults set to the same as those used on the command line #
 ##########################################################################################
+#' omics enrichment analysis
+#' 
+#' @param input_data It could be either 1) a score file which has at least a column for feature names and an column for scores, or 2) a omics profile which has rows as samples and columns as features 
+#' @param output output a directory path to where user wants resulst to be written
+#' @param mapper_file a mapping file that has at least towcolumns one for pathways and one for features in each pathways in long format
+#' @param pathway_col a column for pathways in the mapper_file
+#' @param feature_col a column for features in the mapper_file
+#' @param input_metadata a file or data frame that has metadata where score file in not provided and scores need to be calulated usig input_data, input_metadata, and meta
+#' @param meta a couln name in input_metadata when score needs to be calculated an d score file is not provided (input_data is not a core file but a omics profile)
+#' @param case_label a name for case group and is part of meta values. 
+#' @param control_label a name for control group and is part of meta values.
+#' @param score_col a columnb name in input_data
+#' @param pval_threshold a threshold for p-value which will be used to decide to visualize result for a pathway or not 
+#' @param fdr_threshold a threshold for fdr which will be used to decide to visualize result for a pathway or not
+#' @param  Pathway.Subject a pathway subject when HMDB database is provided as reference for metabolites (as omics features)
+#' @param  method a enrichment methods to be used, options are ks, gset, and wilcox
+#' @param  min_member a condition for a pathway to be analyzed as minimum number of a pathway members to be seen in the study
+#' @param  do_plot a TRUE or FALSE to plot result or not 
+#' @return The result as a list  of 1) \code{enrichment_stats} a table for statistic of pathway enrichment, \code{rank_plots} a list of ggplots for density plot of enrichment base don rank of features, and 3) \code{score_plots} a list of ggplots for density plot of enrichment base don score of feature.
+#' @examples
+#' deepath_result <- deepath::deepath( input_data = score_data_no_COVID, input_metadata = NA, 
+#' pathway_col = "Pathway", feature_col = "Feature", meta <- NA, case_label <- "", 
+#' control_label <- "", output = "~/deepath_enrichment_metabolite_no_COVID_fdr1",
+#' input_data = score_data_no_COVID,
+#' score_col = 'coef', 
+#' pval_threshold = 0.05, 
+#' fdr_threshold = NA, 
+#' Pathway.Subject = NA,#'Metabolic', 
+#' do_plot = TRUE, 
+#' mapper_file = "~/Databases/Metabolomics/Pathways/smpdb_metabolites.tsv",
+#' method = "wilcox",
+#' min_member = 2)
 #' @export
 deepath <- function(input_data,
                     output,

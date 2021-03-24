@@ -21,8 +21,8 @@ set_coloures <- function() {
 set_names <- function() {
   site_names <- list()
   # Legend entries will appear in the order given here
-  site_names$all_features <- "The rest of omics features"
-  site_names$pathway <- "Pathway's members"
+  site_names$all_features <- "Members not in the pathway"
+  site_names$pathway <- "Members in the pathway"
   return(site_names)
 }
 
@@ -126,6 +126,29 @@ setup_smpdb_metabolites_db <-
     return(paste(db_path, "/smpdb_metabolites.csv", sep = ''))
   }
 
+#' mplementation of the GPD-based p-value estimation algorithm
+#' 
+#' @param x0 an input vector of values
+#' @param y  an input vector of values
+#' @param minM_epdf a minimumn number of iterations for EPDF 
+#' @param Nexc a number of permution to performe in each step default 250 
+#' @param Nexc_shrink default 10
+#' @param Nexc_alpha default 0.05
+#' @param yfun default 
+#' @param ystart default 200
+#' @param ygrow default 100
+#' @param ymax default 5000
+#' @return a \code{pvalue}
+#' @examples
+#' gpd_permutation_test (x, y)
+#' @references 
+#' Implementation of the GPD-based p-value estimation algorithm from
+#' Knijnenburg, Wessels, Reinders, and Shmulevich (2009) Fewer
+#' permutations, more accurate P-values. Bioinformatics 25(12): i161–i168.
+#' DOI: 10.1093/bioinformatics/btp211
+#' Implemented by Jason Lloyd-Price and Ali Rahnavard
+
+#' @export
 gpd_permutation_test <- function(x0,
                                  y,
                                  minM_epdf = 10,
@@ -136,12 +159,6 @@ gpd_permutation_test <- function(x0,
                                  ystart = 200,
                                  ygrow = 100,
                                  ymax = 5000) {
-  # Implementation of the GPD-based p-value estimation algorithm from
-  # Knijnenburg, Wessels, Reinders, and Shmulevich (2009) Fewer
-  # permutations, more accurate P-values. Bioinformatics 25(12): i161–i168.
-  # DOI: 10.1093/bioinformatics/btp211
-  # Implemented by Jason Lloyd-Price and Ali Rahnavard
-  
   if (missing(y)) {
     # Automatic sampling of y
     stopifnot(!missing(yfun))
