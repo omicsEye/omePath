@@ -126,7 +126,7 @@ setup_smpdb_metabolites_db <-
     return(paste(db_path, "/smpdb_metabolites.csv", sep = ''))
   }
 
-#' mplementation of the GPD-based p-value estimation algorithm
+#' Implementation of the GPD-based p-value estimation algorithm
 #' 
 #' @param x0 an input vector of values
 #' @param y  an input vector of values
