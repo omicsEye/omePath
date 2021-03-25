@@ -8,7 +8,12 @@ Authors@R: c(
            family = "Rahnavard",
            role = c("aut", "cre"),
            email = "gholamali.rahnavard@gmail.com",
-           comment = c(ORCID = "0000-0002-9710-0248"))
+           comment = c(ORCID = "0000-0002-9710-0248")),
+           person(given = "Himel",
+           family = "Mallick",
+           role = c("aut"),
+           email = "himel.mallick@merck.com",
+           comment = c(ORCID = "0000-0003-4956-2429"))
            )
 Depends: R (>= 3.6)
 Description: Omics Pathway Enrichment Analysis
