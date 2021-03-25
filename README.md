@@ -2,7 +2,9 @@
 deepath is a generic tool for omics pathway enrichment analysis
 
 * **Citation:** if you use the deepath software, please cite our manuscript: Ali Rahnavard and Himel Mallick (2021). **deepath: Generic Omics Pathway Enrichment Analysis.** R package version 1.1.1. https://www.rahnavard.org/deepath.
-* This page provides a quick toturial (workshop orinted) infomration to start and use *deepath*. 
+
+
+This page provides a quick tutorial (workshop oriented) information to start and use *deepath*. 
 
 
 If you have questions, please submit it as an issue using [deepath issue tracker](https://github.com/omicsEye/deepath/issues).
