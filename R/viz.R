@@ -78,8 +78,8 @@ enrichment_plot <- function(
   
   rank_plots <- NA
   score_plots <- NA
-  site_colours <- deepath::set_coloures()
-  site_names <- deepath::set_names()
+  site_colours <- set_coloures()
+  site_names <- set_names()
   #pathways_names <- names(mapper)#unique(mapper_pathway2feature[1])
   rank_plots <-
     vector(mode = "list", length = dim(enrichment_stats)[1])

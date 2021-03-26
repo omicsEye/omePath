@@ -14,6 +14,7 @@ If you have questions, please submit it as an issue using [deepath issue tracker
 * [Description](#description)
 * [Requirements](#requirements)
 * [Installation](#installation)
+* [Download the mapping database](#download-the-mapping-database)
 * [How to Run](#how-to-run)
     * [Input Files](#input-files)
     * [Output Files](#output-files)
@@ -85,11 +86,11 @@ We provide mapping files (pathways-feature) for four main omics:
 * Metagenomics: Microbial genes pathways (GO terms - UniRef90)
 
 * The Molecular Signatures Database (MSigDB), C5: ontology gene sets including 14765 gene sets
-    * Please download the preprocessed mapping file at [HERE](https://www.dropbox.com/s/zlobyzn92r43nqy/c5.all.v7.1.entrez.tsv?dl=0)
+    * Please download the pre-processed mapping file at [HERE](https://www.dropbox.com/s/zlobyzn92r43nqy/c5.all.v7.1.entrez.tsv?dl=0)
 
 
 * Metabolomics: (Metabolic Pathways - Metabolites HMDBID)
-    * Please download the preprocessed mapping file at [HERE](https://www.dropbox.com/s/rzx6hsq7xmr87te/smpdb_metabolites.tsv?dl=0)
+    * Please download the pre-processed mapping file at [HERE](https://www.dropbox.com/s/rzx6hsq7xmr87te/smpdb_metabolites.tsv?dl=0)
     
 
 * Proteomics: coming soon
@@ -98,7 +99,7 @@ We provide mapping files (pathways-feature) for four main omics:
 ### Input files format ###
 
 * all input files should be tab-delimited formatted  
-* deepath requires a mapper file that can be downloaded from [previouse step](#download_the_mapping_database) an input files.
+* deepath requires a mapper file that can be downloaded from [previouse step](#Download-the-mapping-database) an input files.
 
 #### Two approaches of run *deepath* ####
 
@@ -129,7 +130,6 @@ HMDB00929       |  0.071698012   |  80         |  0.670659533
 HMDB00162       |  -0.030734138  |  67         |  0.798745339
 HMDB00725       |  0.070803166   |  92         |  0.265669584
 
-and continues ... 
 
 2. Providing a data and a metadata file to calculate a score for feature (currenlty logFC). providing data, metadata, and mapping file: this allows to score features using provides function by deepath such as logFC.
 
@@ -223,6 +223,10 @@ Purine Metabolism                |  0.001369986  |  0.004109959  |  10  |  0.701
 ### Run a Demo ###
 
 Example input files can be found in the tests folder of the deepath source. 
+
+```
+
+```
 
 
 
