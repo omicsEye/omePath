@@ -20,6 +20,7 @@ Description: Omics Pathway Enrichment Analysis
 License: MIT + file LICENSE
 LazyData: false
 RoxygenNote: 7.1.1
+Depends: ggplot2, pheatmap, gsEasy, future, dplyr, readr, logging, downloader
 Imports: ggplot2, pheatmap, gsEasy, future, dplyr, readr, logging, downloader
 Suggests: 
     knitr,
