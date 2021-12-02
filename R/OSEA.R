@@ -150,7 +150,7 @@ OSEA <- function(stats_table,
         )
       )
   }
-  # Add q value to the enrichment stats and write it to th eoutput
+  # Add q value to the enrichment stats and write it to the output
   enrichment_stats$fdr <-
     p.adjust(enrichment_stats$pval, method = 'BH')
   if (dim(enrichment_stats)[1] == 0)

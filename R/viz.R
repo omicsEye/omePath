@@ -71,7 +71,7 @@ enrichment_plot <- function(
     stats <- stats[order(stats[score_col]), ]
   }
   stats$score_rank <- seq.int(nrow(stats))
-  
+  zero_rank <- match(min(stats[score_col][stats[score_col]>=0]), stats[,score_col])
   pathways <-
     unique(unlist(lapply(mapper_pathway2feature[pathway_col], as.character)))
   
@@ -188,7 +188,7 @@ enrichment_plot <- function(
           size = 2.25,
           fontface = "italic"
         ) +
-        ggplot2::geom_vline(ggplot2::aes(xintercept = median(stats$score_rank)),
+        ggplot2::geom_vline(ggplot2::aes(xintercept = zero_rank),
                             color = "black",
                             size = 0.1) +
         
