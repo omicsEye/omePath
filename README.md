@@ -1,7 +1,7 @@
 # deepath
 deepath is a generic tool for omics pathway enrichment analysis
 
-* **Citation:** if you use the deepath software, please cite our manuscript: Ali Rahnavard and Himel Mallick (2021). **deepath: Generic Omics Pathway Enrichment Analysis.** R package version 1.1.1. https://www.rahnavard.org/deepath.
+* **Citation:** if you use the deepath software, please cite our manuscript: Ali Rahnavard and Himel Mallick, et al. (2022). **deepath: Generic Omics Pathway Enrichment Analysis.** R package version 1.1.1. https://www.rahnavard.org/deepath.
 
 
 This page provides a quick tutorial (workshop oriented) information to start and use *deepath*. 
@@ -17,6 +17,7 @@ If you have questions, please submit it as an issue using [deepath issue tracker
 * [Download the mapping database](#download-the-mapping-database)
 * [How to Run](#how-to-run)
     * [Input Files](#input-files)
+    
     * [Output Files](#output-files)
     * [Run a Demo](#run-a-demo)
     * [Options](#options)
@@ -102,10 +103,9 @@ We provide mapping files (pathways-feature) for four main omics:
 * all input files should be tab-delimited formatted  
 * deepath requires a mapper file that can be downloaded from [previouse step](#Download-the-mapping-database) an input files.
 
-#### Two approaches of run *deepath* ####
+#### Tweedieverse  output as input for approaches of run *deepath* ####
 
-
-1. Providing the score file and mapping file:
+Providing the score file and mapping file:
 
 In this approach, a tab-delimited text file or a R data frame with row names being the features need to be provided.
 The file should have a column which will be used as the score for enrichment analysis. 
@@ -132,7 +132,6 @@ HMDB00162       |  -0.030734138  |  67         |  0.798745339
 HMDB00725       |  0.070803166   |  92         |  0.265669584
 
 
-2. Providing a data and a metadata file to calculate a score for feature (currenlty logFC). providing data, metadata, and mapping file: this allows to score features using provides function by deepath such as logFC.
 
 * Data (or features) file : This file is tab-delimited formatted with features as columns and samples as rows (the transpose is also okay).
 
@@ -141,6 +140,9 @@ HMDB00725       |  0.070803166   |  92         |  0.265669584
 * Mapping files: maps pathways to memebrs (features).
 
 NOTE: If running deepath as a function, the data inputs can be of type ``data.frame`` instead of a path to a file.
+
+![Tweedieverse output as input for deepath](img/Tweedieverse_input.png)
+
 
 
 ## Run ##
@@ -251,7 +253,7 @@ Run deepath help to print a list of the options and the default settings.
 
 ``fdr_threshold``: a threshold used to visualize only pathways with enrichment q-value (FDR) less or equal to it, and the default is NA. If the value is not NA then overwrites the ``pval_threshold`` condition.
 
-[[/img/enrichment_rank_based_plot.png|alt=Enrichment Plot]]
+![Enrichment Plot](img/enrichment_plot.png)
 
 ## Example of Real world applications ##
 
