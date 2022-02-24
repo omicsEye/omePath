@@ -6,8 +6,6 @@ deepath is a generic tool for omics pathway enrichment analysis
 
 This page provides a quick tutorial (workshop oriented) information to start and use *deepath*. 
 
-
-If you have questions, please submit it as an issue using [deepath issue tracker](https://github.com/omicsEye/deepath/issues).
 --------------------------------------------
 
 ## Contents ##
