@@ -1,4 +1,4 @@
-Package: deepath
+Package: omePath
 Title: Generic Omics Pathway Enrichment Analysis
 Version: 1.1.1
 Year: 2021
@@ -26,7 +26,7 @@ Suggests:
     knitr,
     testthat (>= 2.1.0)
 VignetteBuilder: knitr
-Collate: deepath.R OSEA.R utils.R theme_omicsEye.R score.R viz.R 
-URL: https://github.com/omicsEye/deepath
+Collate: omePath.R OSEA.R utils.R theme_omicsEye.R score.R viz.R 
+URL: https://github.com/omicsEye/omePath
 biocViews: Omics, Software, Enrichment, Analysis, Pathway
-BugReports: https://github.com/omicsEye/deepath/issues
+BugReports: https://github.com/omicsEye/omePath/issues

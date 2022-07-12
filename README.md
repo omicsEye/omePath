@@ -1,10 +1,10 @@
-# deepath
-deepath is a generic tool for omics pathway enrichment analysis
+# omePath
+omePath is a generic tool for omics pathway enrichment analysis
 
-* **Citation:** if you use the deepath software, please cite our manuscript: Ali Rahnavard and Himel Mallick, et al. (2022). **deepath: Generic Omics Pathway Enrichment Analysis.** R package version 1.1.1. https://www.rahnavard.org/deepath.
+* **Citation:** if you use the omePath software, please cite our manuscript: Ali Rahnavard and Himel Mallick, et al. (2022). **omePath: Generic Omics Pathway Enrichment Analysis.** R package version 1.1.1. https://www.rahnavard.org/omePath.
 
 
-This page provides a quick tutorial (workshop oriented) information to start and use *deepath*. 
+This page provides a quick tutorial (workshop oriented) information to start and use *omePath*. 
 
 --------------------------------------------
 
@@ -26,7 +26,7 @@ This page provides a quick tutorial (workshop oriented) information to start and
 
 ## Description ##
 
-*deepath* provide enrichment analysis techniques with following properties:
+*omePath* provide enrichment analysis techniques with following properties:
 
 * A general-purpose enrichment applicable for any omics data.
 
@@ -36,11 +36,11 @@ This page provides a quick tutorial (workshop oriented) information to start and
 
 ## Requirements ##
 
-deepath is an R package that can be run on the command line or as an R function. It requires the following R packages included in Bioconductor and CRAN (Comprehensive R Archive Network). Please install these packages before running *deepath*.
+omePath is an R package that can be run on the command line or as an R function. It requires the following R packages included in Bioconductor and CRAN (Comprehensive R Archive Network). Please install these packages before running *omePath*.
 
 * Only for Windows OS:
     * ``Install Rtools:`` https://cran.r-project.org/bin/windows/Rtools/
-    * We tested using `Rtools35.exe` version, and in the future we will ensure `deepath` works with the latest recommended version.
+    * We tested using `Rtools35.exe` version, and in the future we will ensure `omePath` works with the latest recommended version.
 
 * CRAN packages
     * [dplyr: A Grammer of Data Manipulation](https://cran.rstudio.com/web/packages/dplyr/index.html)
@@ -53,12 +53,12 @@ deepath is an R package that can be run on the command line or as an R function.
 
 ## Installation ##
 
-deepath can be installed as an R package and run as an R function. You will need to install the deepath dependencies.
+omePath can be installed as an R package and run as an R function. You will need to install the omePath dependencies.
 
 ### From R ###
 
 
-### Install deepath in RStudio ###
+### Install omePath in RStudio ###
 
 1. Install devtools : 
     * ``> install.packages('devtools')``
@@ -68,8 +68,8 @@ deepath can be installed as an R package and run as an R function. You will need
     * ``> BiocManager::install('limma')``
 3. Install the CRAN dependencies:
     * ``> install.packages(c('future', 'downloader', 'reader', 'backports', 'gsEasy','pscl','pbapply','car','nlme','dplyr','vegan','chemometrics','ggplot2','pheatmap','cplm','hash','logging','data.table'), repos='http://cran.r-project.org')``
-4. Install deepath (and also all dependencies from CRAN): 
-    * ``> devtools::install_github('omicsEye/deepath', force = TRUE)``
+4. Install omePath (and also all dependencies from CRAN): 
+    * ``> devtools::install_github('omicsEye/omePath', force = TRUE)``
 
 ### Download the mapping database ###
 
@@ -99,16 +99,16 @@ We provide mapping files (pathways-feature) for four main omics:
 ### Input files format ###
 
 * all input files should be tab-delimited formatted  
-* deepath requires a mapper file that can be downloaded from [previouse step](#Download-the-mapping-database) an input files.
+* omePath requires a mapper file that can be downloaded from [previouse step](#Download-the-mapping-database) an input files.
 
-#### Tweedieverse  output as input for approaches of run *deepath* ####
+#### Tweedieverse  output as input for approaches of run *omePath* ####
 
 Providing the score file and mapping file:
 
 In this approach, a tab-delimited text file or a R data frame with row names being the features need to be provided.
 The file should have a column which will be used as the score for enrichment analysis. 
 
-[deepath demo](https://github.com/omicsEye/deepath/tree/master/demo)
+[omePath demo](https://github.com/omicsEye/omePath/tree/master/demo)
 
 |               |  coef         |  statistic  |  P.Value
 ----------------|----------------|-------------|-------------
@@ -137,9 +137,9 @@ HMDB00725       |  0.070803166   |  92         |  0.265669584
     
 * Mapping files: maps pathways to memebrs (features).
 
-NOTE: If running deepath as a function, the data inputs can be of type ``data.frame`` instead of a path to a file.
+NOTE: If running omePath as a function, the data inputs can be of type ``data.frame`` instead of a path to a file.
 
-![Tweedieverse output as input for deepath](img/Tweedieverse_input.png)
+![Tweedieverse output as input for omePath](img/Tweedieverse_input.png)
 
 
 
@@ -147,11 +147,11 @@ NOTE: If running deepath as a function, the data inputs can be of type ``data.fr
 
 ```
 # load the library
-library(deepath)
+library(omePath)
 
 
 # call the function
-deepath_results <- deepath(input_data,
+omePath_results <- omePath(input_data,
                     output,
                     mapper_file, 
                     pathway_col = "Pathway",
@@ -205,7 +205,7 @@ be used for calculating score (e.g., Diagnosis).
 
 ### Output Files ###
 
-deepath generates two types of output files: data and visualization.
+omePath generates two types of output files: data and visualization.
 
 1. Data output file
     * ``enrichment_stats.tsv`` : This file contains all of the enrichment analysis results ordered by increasing q-value.
@@ -217,13 +217,13 @@ Histidine Metabolism             |  0.179104478  |  0.268656716  |  10  |  0.502
 Purine Metabolism                |  0.001369986  |  0.004109959  |  10  |  0.701651617
 
 
-    * ``deepath.log`` : This file contains all of the debug information for the run. It includes all settings, warnings, errors, and steps run.
+    * ``omePath.log`` : This file contains all of the debug information for the run. It includes all settings, warnings, errors, and steps run.
 2. Visualization output files
     * ``enrichment_plots.pdf`` : This file contains a heatmap of the significant associations.
 
 ### Run a Demo ###
 
-Example input files can be found in the tests folder of the deepath source. 
+Example input files can be found in the tests folder of the omePath source. 
 
 ```
 
@@ -233,17 +233,17 @@ Example input files can be found in the tests folder of the deepath source.
 
 ### Options ###
 
-Run deepath help to print a list of the options and the default settings.
+Run omePath help to print a list of the options and the default settings.
 
 
 
 
 ## Visualization ##
 
-`deepath` generates two enrichment plot per pathways (rank based and score based) in deepath that visualize the outputs and provide ggplot2 plots that can be used to generate manuscript/report quality figures. the m2 path returns a result variable which contains three variables 1) stats table 2) a list or ranked based enrichment plots, and 3) a list of score based enrichment plots.
-* ``deepath ``: this function generates an enrichment plot of all pathways reported by deepath and have the following parameters:
+`omePath` generates two enrichment plot per pathways (rank based and score based) in omePath that visualize the outputs and provide ggplot2 plots that can be used to generate manuscript/report quality figures. the m2 path returns a result variable which contains three variables 1) stats table 2) a list or ranked based enrichment plots, and 3) a list of score based enrichment plots.
+* ``omePath ``: this function generates an enrichment plot of all pathways reported by omePath and have the following parameters:
 
-``output_path``: the path to the deepath output.
+``output_path``: the path to the omePath output.
 
 ``do_plot``: a parameter to default is TRUE to generate the plots
 
@@ -266,9 +266,9 @@ Data ref: Goltsman, D.S.A., Sun, C.L. and Proctor, D.M., Metagenomic analysis wi
 ## Troubleshooting ##
 
 1. Question: When I try to install the R package I see errors about dependencies not being installed. Why is this?
-    * Answer: Installing the R package will not automatically install the packages deepath requires. Please install the dependencies and then install the deepath R package.
+    * Answer: Installing the R package will not automatically install the packages omePath requires. Please install the dependencies and then install the omePath R package.
 
-2. Question: When I run as a function I see the error ``Error in library(deepath): there is no package called 'deepath'``. How do I fix this? 
+2. Question: When I run as a function I see the error ``Error in library(omePath): there is no package called 'omePath'``. How do I fix this? 
     * Answer: Install the R package and then try loading the library again.
 
 

@@ -1,4 +1,4 @@
-# this script inlcudes scoring functions supported by deepath
+# this script inlcudes scoring functions supported by omePath
 
 test2groups <- function(data,
          metadata,

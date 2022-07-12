@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 ###############################################################################
-# deepath
+# omePath
 
 # Copyright (c) 2019 the Rahnavard Lab at The George Washington University
 
@@ -30,13 +30,13 @@
 #}
 
 ###############################################################
-# If running on the command line, load other deepath modules #
+# If running on the command line, load other omePath modules #
 ###############################################################
 
 # this evaluates to true if script is being called directly as an executable
 if (identical(environment(), globalenv()) &&
     !length(grep("^source\\(", sys.calls()))) {
-  # source all R in deepath package, relative to this folder
+  # source all R in omePath package, relative to this folder
   script_options <- commandArgs(trailingOnly = FALSE)
   script_path <-
     sub("--file=", "", script_options[grep("--file=", script_options)])
@@ -63,7 +63,7 @@ option_not_valid_error <- function(message, valid_options) {
 method_choices <- c("gset", "ks", 'wilcox')
 
 ##########################################################################################
-# Main deepath function with defaults set to the same as those used on the command line #
+# Main omePath function with defaults set to the same as those used on the command line #
 ##########################################################################################
 #' omics enrichment analysis
 #' 
@@ -85,9 +85,9 @@ method_choices <- c("gset", "ks", 'wilcox')
 #' @param  do_plot a TRUE or FALSE to plot result or not 
 #' @return The result as a list  of 1) \code{enrichment_stats} a table for statistic of pathway enrichment, \code{rank_plots} a list of ggplots for density plot of enrichment base don rank of features, and 3) \code{score_plots} a list of ggplots for density plot of enrichment base don score of feature.
 #' @examples
-#' deepath_result <- deepath::deepath( input_data = score_data_no_COVID, input_metadata = NA, 
+#' omePath_result <- omePath::omePath( input_data = score_data_no_COVID, input_metadata = NA, 
 #' pathway_col = "Pathway", feature_col = "Feature", meta <- NA, case_label <- "", 
-#' control_label <- "", output = "~/deepath_enrichment_metabolite_no_COVID_fdr1",
+#' control_label <- "", output = "~/omePath_enrichment_metabolite_no_COVID_fdr1",
 #' input_data = score_data_no_COVID,
 #' score_col = 'coef', 
 #' pval_threshold = 0.05, 
@@ -98,7 +98,7 @@ method_choices <- c("gset", "ks", 'wilcox')
 #' method = "wilcox",
 #' min_member = 2)
 #' @export
-deepath <- function(input_data,
+omePath <- function(input_data,
                     output,
                     mapper_file,
                     pathway_col = "Pathway",
@@ -304,7 +304,7 @@ deepath <- function(input_data,
   
   # create log file (write info to stdout and debug level to log file)
   # set level to finest so all log levels are reviewed
-  log_file <- file.path(output, "deepath.log")
+  log_file <- file.path(output, "omePath.log")
   # remove log file if already exists (to avoid append)
   if (file.exists(log_file)) {
     print(paste("Warning: Deleting existing log file:", log_file))
