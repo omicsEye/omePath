@@ -26,7 +26,7 @@ Suggests:
     knitr,
     testthat (>= 2.1.0)
 VignetteBuilder: knitr
-Collate: omePath.R OSEA.R utils.R theme_omicsEye.R score.R viz.R 
+Collate: omePath.R enrichment_score.R OSEA.R utils.R theme_omicsEye.R score.R viz.R 
 URL: https://github.com/omicsEye/omePath
 biocViews: Omics, Software, Enrichment, Analysis, Pathway
 BugReports: https://github.com/omicsEye/omePath/issues
