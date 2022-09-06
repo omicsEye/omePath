@@ -63,7 +63,7 @@ omePath can be installed as an R package and run as an R function. You will need
 1. Install devtools : 
     * ``> install.packages('devtools')``
     * ``>library(devtools)``
-2. Install the Bioconuctor dependencies: 
+2. Install the Bioconductor dependencies: 
     * ``> install.packages('BiocManager'); library('BiocManager');``
     * ``> BiocManager::install('limma')``
 3. Install the CRAN dependencies:
@@ -195,7 +195,7 @@ In running approach 2 following data files need to be specified::
 * `input_metadata` identifies your metadata file with N rows by M columns where N are samples and M are metadata. 
 
 
-* `meta` is the name of teh column in metadata that has the case and control groups and need to 
+* `meta` is the name of the column in metadata that has the case and control groups and need to 
 be used for calculating score (e.g., Diagnosis).
 
 * `case_label` is the label used for the case group in `meta` column (e.g., 'UC' or 'Ulcerative Colitis') 
@@ -224,11 +224,6 @@ Purine Metabolism                |  0.001369986  |  0.004109959  |  10  |  0.701
 ### Run a Demo ###
 
 Example input files can be found in the tests folder of the omePath source. 
-
-```
-
-```
-
 
 
 ### Options ###
