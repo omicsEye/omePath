@@ -44,5 +44,5 @@ points(Intersect, FDensity(Intersect), pch=20, col="red")
 
 integrate(MDensity, 40,Intersect)$value + 
   integrate(FDensity, Intersect, 80)$value
-[1] 0.2952838
+#[1] 0.2952838
 
