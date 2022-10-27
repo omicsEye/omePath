@@ -67,7 +67,7 @@ omePath can be installed as an R package and run as an R function. You will need
     * ``> install.packages('BiocManager'); library('BiocManager');``
     * ``> BiocManager::install('limma')``
 3. Install the CRAN dependencies:
-    * ``> install.packages(c('future', 'downloader', 'reader', 'backports', 'gsEasy','pscl','pbapply','car','nlme','dplyr','vegan','chemometrics','ggplot2','pheatmap','cplm','hash','logging','data.table'), repos='http://cran.r-project.org')``
+    * ``> install.packages(c('future', 'downloader', 'reader', 'backports', 'gsEasy','pscl','pbapply','car','nlme','dplyr','vegan','chemometrics','ggplot2','pheatmap','cplm','hash','logging','data.table', 'sfsmisc'), repos='http://cran.r-project.org')``
 4. Install omePath (and also all dependencies from CRAN): 
     * ``> devtools::install_github('omicsEye/omePath', force = TRUE)``
 
