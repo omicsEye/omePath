@@ -24,7 +24,7 @@ enrichment_plot <- function(
     if (nrow(mapper_pathway2feature) == 1) {
       # read again to get row name
       mapper_pathway2feature <-
-        read.table(
+        utils::read.table(
           mapper_file,
           header = TRUE,
           check.names = FALSE,
@@ -50,7 +50,7 @@ enrichment_plot <- function(
     if (nrow(stats_table) == 1) {
       # read again to get row name
       stats <-
-        read.table(
+        utils::read.table(
           stats_table,
           header = TRUE,
           row.names = 1,
@@ -66,9 +66,11 @@ enrichment_plot <- function(
   stats <- stats[!is.na(stats[score_col]), , drop = F]
   stats$score_rank <- NA
   if (score_col == 'P.Value') {
-    stats <- stats[order(-stats[score_col]), ]
+    stats <- stats |>
+      dplyr::arrange(dplyr::desc(score_col))
   } else{
-    stats <- stats[order(stats[score_col]), ]
+    stats <- stats |>
+      dplyr::arrange(score_col)
   }
   stats$score_rank <- seq.int(nrow(stats))
   zero_rank <- match(min(stats[score_col][stats[score_col]>=0]), stats[,score_col])
@@ -88,7 +90,7 @@ enrichment_plot <- function(
   if (dim(enrichment_stats)[1] == 0)
     return(list(enrichment_stats, rank_plots, score_plots))
   logging::loginfo("Plotting data for %s, %s", "feature", "enrichment")
-  pdf(
+  grDevices::pdf(
     paste(output, '/enrichment_plots.pdf', sep = ''),
     width = 2.4,
     height = 2.25,
@@ -122,12 +124,12 @@ enrichment_plot <- function(
       density_plot <-
         ggplot2::ggplot(stats, ggplot2::aes(
           x = stats$score_rank,
-          fill = Set,
-          color = Set
+          fill = .data$Set,
+          color = .data$Set
         ))
       density_plot <- density_plot +
         ggplot2::geom_density(alpha = 0.4, size = .15) +
-        ggplot2::geom_rug(ggplot2::aes(x = stats$score_rank, color = Rug, y = 0),
+        ggplot2::geom_rug(ggplot2::aes(x = stats$score_rank, color = .data$Rug, y = 0),
                           alpha = 0.4,
                           size = .1) +
         ggplot2::scale_color_manual(
@@ -178,7 +180,7 @@ enrichment_plot <- function(
         ) +
         ggplot2::annotate(
           geom = "text",
-          x = median(stats$score_rank),
+          x = stats::median(stats$score_rank),
           y = Inf,
           hjust = 1,
           vjust = 1,
@@ -198,7 +200,7 @@ enrichment_plot <- function(
       #ggsave(filename=paste(outpath,'/score_',enrichment_stats[i, 'pathway'],'.pdf', sep =''),
       #       plot=density_plot, width = 60, height = 50, units = "mm", dpi = 350)
       stdout <-
-        capture.output(print(density_plot), type = "message")
+        utils::capture.output(print(density_plot), type = "message")
       #logging::logdebug(stdout)
       
       ### plot the enrichment based on score ####################
@@ -212,7 +214,7 @@ enrichment_plot <- function(
         ggplot2::geom_density(alpha = 0.4, size = .15) +
         ggplot2::geom_rug(ggplot2::aes(
           x = get(score_col),
-          color = Rug,
+          color = .data$Rug,
           y = 0
         ),
         alpha = 0.4,
@@ -284,7 +286,7 @@ enrichment_plot <- function(
       #ggsave(filename=paste(outpath,'/score_',enrichment_stats[i, 'pathway'],'.pdf', sep =''),
       #       plot=density_plot, width = 60, height = 50, units = "mm", dpi = 350)
       stdout <-
-        capture.output(print(density_plot), type = "message")
+        utils::capture.output(print(density_plot), type = "message")
       #logging::logdebug(stdout)
       
       #}
@@ -303,7 +305,7 @@ enrichment_plot <- function(
     })
     
   } # end of the loop for plotting
-  invisible(dev.off())
+  invisible(grDevices::dev.off())
   saveRDS(rank_plots, file = paste(output,"/figures/",  "gg_enrichment_rank.RDS", sep = ""))
   saveRDS(score_plots, file = paste(output,"/figures/", "gg_enrichment_score.RDS", sep = ""))
   

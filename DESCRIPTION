@@ -1,32 +1,38 @@
 Package: omePath
 Title: Generic Omics Pathway Enrichment Analysis
 Version: 1.1.1
-Year: 2021
 Date: 2021
-Authors@R: c( 
-           person(given = "Ali",
-           family = "Rahnavard",
-           role = c("aut", "cre"),
-           email = "gholamali.rahnavard@gmail.com",
+Authors@R: c(
+    person("Ali", "Rahnavard", , "gholamali.rahnavard@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9710-0248")),
-           person(given = "Himel",
-           family = "Mallick",
-           role = c("aut"),
-           email = "himel.mallick@merck.com",
+    person("Himel", "Mallick", , "himel.mallick@merck.com", role = "aut",
            comment = c(ORCID = "0000-0003-4956-2429"))
-           )
-Depends: R (>= 3.6)
+  )
 Description: Omics Pathway Enrichment Analysis
 License: MIT + file LICENSE
-LazyData: false
-RoxygenNote: 7.1.1
-Depends: ggplot2, pheatmap, gsEasy, future, dplyr, readr, logging, downloader
-Imports: ggplot2, pheatmap, gsEasy, future, dplyr, readr, logging, downloader
+URL: https://github.com/omicsEye/omePath
+BugReports: https://github.com/omicsEye/omePath/issues
+Depends: 
+    R (>= 2.10)
+Imports: 
+    data.table,
+    downloader,
+    dplyr,
+    future,
+    ggplot2,
+    gsEasy,
+    logging,
+    magrittr,
+    pheatmap,
+    readr,
+    sfsmisc
 Suggests: 
     knitr,
     testthat (>= 2.1.0)
-VignetteBuilder: knitr
-Collate: omePath.R enrichment_score.R OSEA.R utils.R theme_omicsEye.R score.R viz.R 
-URL: https://github.com/omicsEye/omePath
+VignetteBuilder: 
+    knitr
 biocViews: Omics, Software, Enrichment, Analysis, Pathway
-BugReports: https://github.com/omicsEye/omePath/issues
+Encoding: UTF-8
+LazyData: false
+RoxygenNote: 7.2.3
+Year: 2021

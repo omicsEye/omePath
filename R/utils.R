@@ -11,7 +11,7 @@ set_coloures <- function() {
   site_colours <- list()
   #site_colours$Reference_genome <- "white"
   site_colours$all_features <-
-    rgb(0, 38, 84, maxColorValue = 255) #"gray60"
+    grDevices::rgb(0, 38, 84, maxColorValue = 255) #"gray60"
   site_colours$pathway <-
     'darkgoldenrod' #rgb(226, 203, 146, maxColorValue = 255) #"orange"
   return(site_colours)
@@ -54,14 +54,14 @@ downloadMappingFiles <- function(db_path) {
   # Download from http://smpdb.ca/downloads
   logging::loginfo("Start downloading the SMPDB metabolites database!")
   url <- 'http://smpdb.ca/downloads/smpdb_metabolites.csv.zip'
-  download(
+  downloader::download(
     url,
     dest = paste(db_path, "/smpdb_metabolites.csv.zip", sep = ''),
     mode = "wb"
   )
   
   # extract the zip file to smpdb_metabolites
-  unzip (
+  utils::unzip(
     paste(db_path, "/smpdb_metabolites.csv.zip", sep = ''),
     exdir = paste(db_path, "/smpdb_metabolites", sep = '')
   )
@@ -72,12 +72,11 @@ merge_cvs <- function(input_dir_path, outputfile) {
   # extract the zip file to smpdb_metabolites
   #input_dir_path = "~/Downloads/smpdb_metabolites"
   #outputfile = '/Users/rah/Documents/Metabolomics/example_data/HMDB/merged_ref_db.csv'
-  library(dplyr)
-  library(readr)
+
   df <- list.files(path = input_dir_path, full.names = TRUE) %>%
-    lapply(read_csv) %>%
-    bind_rows
-  write_csv(df, outputfile)
+    lapply(readr::read_csv) %>%
+    dplyr::bind_rows()
+  readr::write_csv(df, outputfile)
 }
 setup_smpdb_metabolites_db <-
   function(db_path,
@@ -127,6 +126,7 @@ setup_smpdb_metabolites_db <-
   }
 
 #' Implementation of the GPD-based p-value estimation algorithm
+#' @name GPD Permutation Test
 #' 
 #' @param x0 an input vector of values
 #' @param y  an input vector of values
@@ -138,9 +138,9 @@ setup_smpdb_metabolites_db <-
 #' @param ystart default 200
 #' @param ygrow default 100
 #' @param ymax default 5000
-#' @return a \code{pvalue}
+#' @return a `pvalue`
 #' @examples
-#' gpd_permutation_test (x, y)
+#' gpd_permutation_test(x, y)
 #' @references 
 #' Implementation of the GPD-based p-value estimation algorithm from
 #' Knijnenburg, Wessels, Reinders, and Shmulevich (2009) Fewer
@@ -178,15 +178,14 @@ gpd_permutation_test <- function(x0,
   }
   
   # Not enough exceedances to be confident about the p-value.. use the GPD
-  library("extRemes")
   while (T) {
     # Fit a GPD
     t <-
       mean(y[max(ceiling(length(y) / 2), length(y) - Nexc) + c(0, 1)])
-    fit <- fevd(y, threshold = t, type = "GP")
+    fit <- extRemes::fevd(y, threshold = t, type = "GP")
     
     # Test goodness-of-fit
-    gof <- ks.test(pextRemes(fit, y[y > t]), punif)
+    gof <- stats::ks.test(extRemes::pextRemes(fit, y[y > t]), stats::punif)
     if (Nexc <= 50 || gof$p.value >= Nexc_alpha) {
       if (Nexc <= 50) {
         warning(
@@ -201,7 +200,7 @@ gpd_permutation_test <- function(x0,
   }
   
   # Get the p-value estimate from the fit
-  p <- mean(y > t) * pextRemes(fit, x0, lower.tail = F)
+  p <- mean(y > t) * extRemes::pextRemes(fit, x0, lower.tail = F)
   
   return (p)
 }

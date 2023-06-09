@@ -1,7 +1,3 @@
-
-
-
-
 # load in the required libraries, report an error if they are not installed
 for (lib in c('gsEasy', 'future', 'ggplot2')) {
   if (!suppressPackageStartupMessages(require(lib, character.only = TRUE)))
@@ -34,7 +30,7 @@ OSEA <- function(stats_table,
     if (nrow(mapper_pathway2feature) == 1) {
       # read again to get row name
       mapper_pathway2feature <-
-        read.table(
+        utils::read.table(
           mapper_file,
           header = TRUE,
           check.names = FALSE,
@@ -47,7 +43,7 @@ OSEA <- function(stats_table,
   if (!is.na(Pathway.Subject)) {
     if ('Subject' %in% colnames(mapper_pathway2feature))
       mapper_pathway2feature <-
-        mapper_pathway2feature[mapper_pathway2feature$Subject == Pathway.Subject, ]
+        mapper_pathway2feature[mapper_pathway2feature$Subject == Pathway.Subject,]
     else
       print(paste('Pathway.Subject is not in mapping file!!!'))
   } else{
@@ -60,7 +56,7 @@ OSEA <- function(stats_table,
     if (nrow(stats_table) == 1) {
       # read again to get row name
       stats <-
-        read.table(
+        utils::read.table(
           stats_table,
           header = TRUE,
           row.names = 1,
@@ -76,9 +72,11 @@ OSEA <- function(stats_table,
   stats <- stats[!is.na(stats[score_col]), , drop = F]
   stats$score_rank <- NA
   if (score_col == 'P.Value') {
-    stats <- stats[order(-stats[score_col]), ]
+    stats <- stats |>
+      dplyr::arrange(dplyr::desc(score_col))
   } else{
-    stats <- stats[order(stats[score_col]), ]
+    stats <- stats |>
+      dplyr::arrange(score_col)
   }
   stats$score_rank <- seq.int(nrow(stats))
   
@@ -99,8 +97,8 @@ OSEA <- function(stats_table,
   )
   pathways <-
     unique(unlist(lapply(mapper_pathway2feature[pathway_col], as.character)))
-
-    for (i in 1:length(pathways)) {
+  
+  for (i in 1:length(pathways)) {
     current_member <- pathways[i] # "Purine Metabolism" #
     pathway_members <-
       mapper_pathway2feature[as.character(mapper_pathway2feature[, pathway_col]) == current_member, feature_col]
@@ -113,7 +111,7 @@ OSEA <- function(stats_table,
     if (method == 'ks') {
       indx <- match(pathway_members_in_study, rownames(stats))
       if (length(indx) > 0) {
-        stats_val <- ks.test(indx, stats$score_rank)
+        stats_val <- stats::ks.test(indx, stats$score_rank)
         pval <- stats_val$p.value
       } else
         pval <- 1.0
@@ -129,7 +127,7 @@ OSEA <- function(stats_table,
     } else if (method == 'wilcox') {
       indx <- match(pathway_members_in_study, rownames(stats))
       if (length(indx) > 0) {
-        stats_val <- wilcox.test(indx, stats$score_rank)
+        stats_val <- stats::wilcox.test(indx, stats$score_rank)
         pval <- stats_val$p.value
       } else
         pval <- 1.0
@@ -152,12 +150,12 @@ OSEA <- function(stats_table,
   }
   # Add q value to the enrichment stats and write it to the output
   enrichment_stats$fdr <-
-    p.adjust(enrichment_stats$pval, method = 'BH')
+    stats::p.adjust(enrichment_stats$pval, method = 'BH')
   if (dim(enrichment_stats)[1] == 0)
     stop(
       "No pathway found with minimum number of features!!!\nPlease make sure your mapping files includes your features!!!"
     )
-  enrichment_stats <-
-    enrichment_stats[order(enrichment_stats["pval"]), ]
+  enrichment_stats <- enrichment_stats |>
+    dplyr::arrange(pval)
   return(enrichment_stats)
 } #end of function

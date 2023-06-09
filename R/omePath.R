@@ -83,9 +83,9 @@ method_choices <- c("gset", "ks", 'wilcox')
 #' @param  method a enrichment methods to be used, options are ks, gset, and wilcox
 #' @param  min_member a condition for a pathway to be analyzed as minimum number of a pathway members to be seen in the study
 #' @param  do_plot a TRUE or FALSE to plot result or not 
-#' @return The result as a list  of 1) \code{enrichment_stats} a table for statistic of pathway enrichment, \code{rank_plots} a list of ggplots for density plot of enrichment base don rank of features, and 3) \code{score_plots} a list of ggplots for density plot of enrichment base don score of feature.
+#' @return The result as a list  of 1) `enrichment_stats` a table for statistic of pathway enrichment, `rank_plots` a list of ggplots for density plot of enrichment base don rank of features, and 3) `score_plots` a list of ggplots for density plot of enrichment base don score of feature.
 #' @examples
-#' omePath_result <- omePath::omePath( input_data = score_data_no_COVID, input_metadata = NA, 
+#' omePath_result <- omePath::omePath(input_data = score_data_no_COVID, input_metadata = NA, 
 #' pathway_col = "Pathway", feature_col = "Feature", meta <- NA, case_label <- "", 
 #' control_label <- "", output = "~/omePath_enrichment_metabolite_no_COVID_fdr1",
 #' input_data = score_data_no_COVID,
@@ -99,7 +99,7 @@ method_choices <- c("gset", "ks", 'wilcox')
 #' min_member = 2)
 #' @export
 omePath <- function(input_data,
-                    output,
+                    output = "output",
                     mapper_file,
                     pathway_col = "Pathway",
                     feature_col = "Feature",
@@ -124,7 +124,7 @@ omePath <- function(input_data,
   if (is.character(input_data)) {
     data <-
       data.frame(
-        read.delim(
+        utils::read.delim(
           input_data,
           sep = '\t',
           header = TRUE,
@@ -138,7 +138,7 @@ omePath <- function(input_data,
     if (nrow(data) == 1) {
       # read again to get row name
       data <-
-        read.table(
+        utils::read.table(
           input_data,
           header = TRUE,
           check.names = FALSE,
@@ -148,10 +148,10 @@ omePath <- function(input_data,
   } else {
     data <- input_data
   }
-  #if meatdat is not provides the data should have column with score
+  #if metadata is not provides the data should have column with score
   if (is.na(input_metadata)) {
     if (!score_col %in% colnames(data)) {
-      print ("Please provide metadata or your score file shouls have the score column!!!")
+      print ("Please provide metadata, or your score file should have a score column.")
     }
   }
   
@@ -167,7 +167,7 @@ omePath <- function(input_data,
         row.names = 1
       )
     if (nrow(metadata) == 1) {
-      metadata <- read.table(
+      metadata <- utils::read.table(
         input_metadata,
         header = TRUE,
         check.names = FALSE,
@@ -374,7 +374,7 @@ omePath <- function(input_data,
     unlink(stats_file)
   }
   logging::loginfo("Writing stats table to file %s", stats_file)
-  write.table(
+  utils::write.table(
     stats_table,
     stats_file,
     sep = "\t",
@@ -414,7 +414,7 @@ omePath <- function(input_data,
   }
   logging::loginfo("Writing enrichment stats table to file %s",
                    enrichment_stats_file)
-  write.table(
+  utils::write.table(
     enrichment_stats,
     file = enrichment_stats_file,
     sep = "\t",

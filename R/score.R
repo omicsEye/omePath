@@ -12,10 +12,10 @@ test2groups <- function(data,
   #data <- as.data.frame(t(data))
   case <- data[case_samples,]
   control <- data[control_samples,]
-  #tranpose data to row as samples and columns as features
+  #transpose data to row as samples and columns as features
   
   stats_table <-
-    setNames(
+    stats::setNames(
       data.frame(matrix(
         ncol = 5, nrow = dim(case)[2]
       )),
@@ -38,11 +38,11 @@ test2groups <- function(data,
       log2(mean(case[,i], na.rm = TRUE)) - log2(mean(control[,i], na.rm = TRUE))
     tryCatch({
       if (test_type == 't.test') {
-        temp_result <- t.test(case[,i], control[,i], paired = F)
+        temp_result <- stats::t.test(case[,i], control[,i], paired = F)
         stats_table[i, 'P.Value'] <- temp_result$p.value
         stats_table[i, 'statistic'] <- temp_result$statistic
       } else{
-        temp_result <- wilcox.test(case[,i], control[,i], paired = F)
+        temp_result <- stats::wilcox.test(case[,i], control[,i], paired = F)
         stats_table[i, 'P.Value'] <- temp_result$p.value
         stats_table[i, 'statistic'] <- temp_result$statistic
       }
@@ -53,13 +53,12 @@ test2groups <- function(data,
   }
   
   stats_table$fdr <-
-    p.adjust(
+    stats::p.adjust(
       as.vector(stats_table$P.Value),
       method = 'BH',
       n = length(stats_table$P.Value)
     )
   
   stats_table$feature <- rownames(stats_table)
-  return
-  (stats_table)
+  return(stats_table)
 }
