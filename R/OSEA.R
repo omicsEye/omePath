@@ -43,7 +43,7 @@ OSEA <- function(stats_table,
   if (!is.na(Pathway.Subject)) {
     if ('Subject' %in% colnames(mapper_pathway2feature))
       mapper_pathway2feature <-
-        mapper_pathway2feature[mapper_pathway2feature$Subject == Pathway.Subject,]
+        mapper_pathway2feature[mapper_pathway2feature$Subject == Pathway.Subject, ]
     else
       print(paste('Pathway.Subject is not in mapping file!!!'))
   } else{

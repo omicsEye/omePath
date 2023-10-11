@@ -72,7 +72,7 @@ merge_cvs <- function(input_dir_path, outputfile) {
   # extract the zip file to smpdb_metabolites
   #input_dir_path = "~/Downloads/smpdb_metabolites"
   #outputfile = '/Users/rah/Documents/Metabolomics/example_data/HMDB/merged_ref_db.csv'
-
+  
   df <- list.files(path = input_dir_path, full.names = TRUE) %>%
     lapply(readr::read_csv) %>%
     dplyr::bind_rows()
@@ -127,21 +127,21 @@ setup_smpdb_metabolites_db <-
 
 #' Implementation of the GPD-based p-value estimation algorithm
 #' @name GPD Permutation Test
-#' 
+#'
 #' @param x0 an input vector of values
 #' @param y  an input vector of values
-#' @param minM_epdf a minimumn number of iterations for EPDF 
-#' @param Nexc a number of permution to performe in each step default 250 
+#' @param minM_epdf a minimumn number of iterations for EPDF
+#' @param Nexc a number of permution to performe in each step default 250
 #' @param Nexc_shrink default 10
 #' @param Nexc_alpha default 0.05
-#' @param yfun default 
+#' @param yfun default
 #' @param ystart default 200
 #' @param ygrow default 100
 #' @param ymax default 5000
 #' @return a `pvalue`
 #' @examples
 #' gpd_permutation_test(x, y)
-#' @references 
+#' @references
 #' Implementation of the GPD-based p-value estimation algorithm from
 #' Knijnenburg, Wessels, Reinders, and Shmulevich (2009) Fewer
 #' permutations, more accurate P-values. Bioinformatics 25(12): i161–i168.
@@ -185,7 +185,8 @@ gpd_permutation_test <- function(x0,
     fit <- extRemes::fevd(y, threshold = t, type = "GP")
     
     # Test goodness-of-fit
-    gof <- stats::ks.test(extRemes::pextRemes(fit, y[y > t]), stats::punif)
+    gof <-
+      stats::ks.test(extRemes::pextRemes(fit, y[y > t]), stats::punif)
     if (Nexc <= 50 || gof$p.value >= Nexc_alpha) {
       if (Nexc <= 50) {
         warning(

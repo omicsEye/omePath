@@ -1,17 +1,16 @@
-enrichment_plot <- function(
-                 stats_table,
-                 enrichment_stats,
-                 output = "~/",
-                 score_col = 'logFC',
-                 pval_threshold = 0.05,
-                 fdr_threshold = NA,
-                 Pathway.Subject = NA,
-                 method = 'gset',
-                 min_member = 2,
-                 mapper_file = NA,
-                 do_plot = TRUE,
-                 pathway_col = "Pathway",
-                 feature_col = "Feature") {
+enrichment_plot <- function(stats_table,
+                            enrichment_stats,
+                            output = "~/",
+                            score_col = 'logFC',
+                            pval_threshold = 0.05,
+                            fdr_threshold = NA,
+                            Pathway.Subject = NA,
+                            method = 'gset',
+                            min_member = 2,
+                            mapper_file = NA,
+                            do_plot = TRUE,
+                            pathway_col = "Pathway",
+                            feature_col = "Feature") {
   # load mapping files
   if (is.character(mapper_file)) {
     mapper_pathway2feature <-
@@ -73,7 +72,8 @@ enrichment_plot <- function(
       dplyr::arrange(score_col)
   }
   stats$score_rank <- seq.int(nrow(stats))
-  zero_rank <- match(min(stats[score_col][stats[score_col]>=0]), stats[,score_col])
+  zero_rank <-
+    match(min(stats[score_col][stats[score_col] >= 0]), stats[, score_col])
   pathways <-
     unique(unlist(lapply(mapper_pathway2feature[pathway_col], as.character)))
   
@@ -122,16 +122,23 @@ enrichment_plot <- function(
       
       ### plot the enrichment based on score_rank ####################
       density_plot <-
-        ggplot2::ggplot(stats, ggplot2::aes(
-          x = stats$score_rank,
-          fill = .data$Set,
-          color = .data$Set
-        ))
+        ggplot2::ggplot(stats,
+                        ggplot2::aes(
+                          x = stats$score_rank,
+                          fill = .data$Set,
+                          color = .data$Set
+                        ))
       density_plot <- density_plot +
         ggplot2::geom_density(alpha = 0.4, size = .15) +
-        ggplot2::geom_rug(ggplot2::aes(x = stats$score_rank, color = .data$Rug, y = 0),
-                          alpha = 0.4,
-                          size = .1) +
+        ggplot2::geom_rug(
+          ggplot2::aes(
+            x = stats$score_rank,
+            color = .data$Rug,
+            y = 0
+          ),
+          alpha = 0.4,
+          size = .1
+        ) +
         ggplot2::scale_color_manual(
           values = unlist(site_colours),
           labels = unlist(site_names),
@@ -190,9 +197,11 @@ enrichment_plot <- function(
           size = 2.25,
           fontface = "italic"
         ) +
-        ggplot2::geom_vline(ggplot2::aes(xintercept = zero_rank),
-                            color = "black",
-                            size = 0.1) +
+        ggplot2::geom_vline(
+          ggplot2::aes(xintercept = zero_rank),
+          color = "black",
+          size = 0.1
+        ) +
         
         ggplot2::xlab(sprintf("Rank of %s", score_col)) +
         ggplot2::ylab('Density')
@@ -212,13 +221,15 @@ enrichment_plot <- function(
         ))
       density_plot <- density_plot +
         ggplot2::geom_density(alpha = 0.4, size = .15) +
-        ggplot2::geom_rug(ggplot2::aes(
-          x = get(score_col),
-          color = .data$Rug,
-          y = 0
-        ),
-        alpha = 0.4,
-        size = .1) +
+        ggplot2::geom_rug(
+          ggplot2::aes(
+            x = get(score_col),
+            color = .data$Rug,
+            y = 0
+          ),
+          alpha = 0.4,
+          size = .1
+        ) +
         ggplot2::scale_color_manual(
           values = unlist(site_colours),
           labels = unlist(site_names),
@@ -306,8 +317,10 @@ enrichment_plot <- function(
     
   } # end of the loop for plotting
   invisible(grDevices::dev.off())
-  saveRDS(rank_plots, file = paste(output,"/figures/",  "gg_enrichment_rank.RDS", sep = ""))
-  saveRDS(score_plots, file = paste(output,"/figures/", "gg_enrichment_score.RDS", sep = ""))
+  saveRDS(rank_plots,
+          file = paste(output, "/figures/",  "gg_enrichment_rank.RDS", sep = ""))
+  saveRDS(score_plots,
+          file = paste(output, "/figures/", "gg_enrichment_score.RDS", sep = ""))
   
   plot_results <- list()
   plot_results$rank_plots <- rank_plots
