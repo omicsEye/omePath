@@ -45,17 +45,17 @@ if (identical(environment(), globalenv()) &&
   
   for (R_file in dir(script_dir, pattern = "*.R"))
   {
-    {
-      if (!(R_file == script_name))
-        source(file.path(script_dir, R_file))
-    }
+    if (!(R_file == script_name))
+      source(file.path(script_dir, R_file))
   }
+}
   
   
   option_not_valid_error <- function(message, valid_options) {
     logging::logerror(paste(message, ": %s"), toString(valid_options))
     stop("Option not valid", call. = FALSE)
   }
+
   
   ###########################
   # Set the default options #
