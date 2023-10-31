@@ -56,6 +56,7 @@ if (identical(environment(), globalenv()) &&
     logging::logerror(paste(message, ": %s"), toString(valid_options))
     stop("Option not valid", call. = FALSE)
   }
+}
   
   ###########################
   # Set the default options #
